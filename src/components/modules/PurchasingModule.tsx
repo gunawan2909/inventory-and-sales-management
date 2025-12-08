@@ -26,6 +26,8 @@ export default function PurchasingModule() {
   const [showCreatePO, setShowCreatePO] = useState(false);
   const [showViewPO, setShowViewPO] = useState(false);
   const [selectedPO, setSelectedPO] = useState<any>(null);
+  const [showVendorDetails, setShowVendorDetails] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState<any>(null);
 
   return (
     <div className="p-6 space-y-6">
@@ -175,7 +177,15 @@ export default function PurchasingModule() {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <button className="text-purple-600 hover:text-purple-700">Select</button>
+                        <button
+                          onClick={() => {
+                            setSelectedVendor(vendor);
+                            setShowVendorDetails(true);
+                          }}
+                          className="text-purple-600 hover:text-purple-700 font-medium"
+                        >
+                          Select
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -523,6 +533,107 @@ export default function PurchasingModule() {
               </button>
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Print PDF
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Vendor Details Modal */}
+      <Modal
+        isOpen={showVendorDetails}
+        onClose={() => setShowVendorDetails(false)}
+        title="Vendor Details"
+        size="md"
+      >
+        {selectedVendor && (
+          <div className="space-y-4">
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-600 text-sm">Vendor Code</p>
+                  <p className="text-gray-900 font-semibold">{selectedVendor.code}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Status</p>
+                  <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
+                    {selectedVendor.status}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-gray-600 text-sm">Vendor Name</p>
+                  <p className="text-gray-900 font-semibold">{selectedVendor.name}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">PKP Status</p>
+                  {selectedVendor.isPkp ? (
+                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm">PKP</span>
+                  ) : (
+                    <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">Non-PKP</span>
+                  )}
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Payment Terms</p>
+                  <p className="text-gray-900">{selectedVendor.paymentTerm}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-gray-900 font-semibold mb-3">Credit Information</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Credit Limit:</span>
+                  <span className="text-gray-900 font-medium">Rp {(selectedVendor.creditLimit / 1000000).toFixed(1)}M</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Outstanding:</span>
+                  <span className={selectedVendor.outstanding > selectedVendor.creditLimit * 0.8 ? 'text-red-600 font-medium' : 'text-gray-900'}>
+                    Rp {(selectedVendor.outstanding / 1000000).toFixed(1)}M
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Available:</span>
+                  <span className="text-green-600 font-medium">
+                    Rp {((selectedVendor.creditLimit - selectedVendor.outstanding) / 1000000).toFixed(1)}M
+                  </span>
+                </div>
+                <div className="pt-2 border-t">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-gray-600 text-sm">Utilization:</span>
+                    <span className="text-gray-900 text-sm">
+                      {((selectedVendor.outstanding / selectedVendor.creditLimit) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${
+                        (selectedVendor.outstanding / selectedVendor.creditLimit) > 0.8 ? 'bg-red-500' :
+                        (selectedVendor.outstanding / selectedVendor.creditLimit) > 0.5 ? 'bg-yellow-500' :
+                        'bg-green-500'
+                      }`}
+                      style={{ width: `${(selectedVendor.outstanding / selectedVendor.creditLimit) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t">
+              <button
+                onClick={() => setShowVendorDetails(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setShowVendorDetails(false);
+                  setShowCreatePO(true);
+                }}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Create PO for This Vendor
               </button>
             </div>
           </div>

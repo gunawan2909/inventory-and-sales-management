@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FileText, RotateCcw, Receipt, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-react';
+import Modal from '../Modal';
 
 const salesOrders = [
   { id: 1, soNumber: 'SO-JKT-20251207-001', customer: 'Toko Jaya', date: '2025-12-07', amount: 5500000, status: 'APPROVED', creditStatus: 'OK' },
@@ -20,6 +21,8 @@ const customerCredits = [
 
 export default function SalesModule() {
   const [activeTab, setActiveTab] = useState<'orders' | 'refund' | 'invoice' | 'credit'>('orders');
+  const [showCreateSO, setShowCreateSO] = useState(false);
+  const [showCreateRefund, setShowCreateRefund] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
@@ -29,7 +32,10 @@ export default function SalesModule() {
           <h1 className="text-gray-900 mb-1">Modul Penjualan (Sales)</h1>
           <p className="text-gray-600">Sales Orders, Refund, Faktur, Credit Management</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+        <button
+          onClick={() => setShowCreateSO(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+        >
           <FileText className="w-4 h-4" />
           Create Sales Order
         </button>
@@ -175,7 +181,10 @@ export default function SalesModule() {
           {activeTab === 'refund' && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+                <button
+                  onClick={() => setShowCreateRefund(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                >
                   <RotateCcw className="w-4 h-4" />
                   Create Refund
                 </button>
@@ -295,6 +304,192 @@ export default function SalesModule() {
           )}
         </div>
       </div>
+
+      {/* Create Sales Order Modal */}
+      <Modal
+        isOpen={showCreateSO}
+        onClose={() => setShowCreateSO(false)}
+        title="Create Sales Order"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">SO Number</label>
+              <input
+                type="text"
+                defaultValue="SO-JKT-20251208-003"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                disabled
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Order Date</label>
+              <input
+                type="date"
+                defaultValue="2025-12-08"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Select Customer *</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="">-- Select Customer --</option>
+              <option>Toko Jaya</option>
+              <option>UD Maju</option>
+              <option>CV Sejahtera</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Payment Terms</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option>Cash</option>
+                <option>Credit 30 Days</option>
+                <option>Credit 45 Days</option>
+                <option>Credit 60 Days</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Delivery Date</label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h3 className="text-gray-900 mb-3">Items</h3>
+            <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-400 text-sm">
+              Add items to this sales order
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex justify-between mb-2">
+              <span className="text-gray-600">Subtotal:</span>
+              <span className="text-gray-900">Rp 0</span>
+            </div>
+            <div className="flex justify-between mb-2">
+              <span className="text-gray-600">PPN (11%):</span>
+              <span className="text-gray-900">Rp 0</span>
+            </div>
+            <div className="flex justify-between border-t pt-2">
+              <span className="text-gray-900 font-semibold">Total:</span>
+              <span className="text-gray-900 font-semibold">Rp 0</span>
+            </div>
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <button
+              onClick={() => setShowCreateSO(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                alert('Sales Order created successfully!');
+                setShowCreateSO(false);
+              }}
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            >
+              Create SO
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Create Refund Modal */}
+      <Modal
+        isOpen={showCreateRefund}
+        onClose={() => setShowCreateRefund(false)}
+        title="Create Refund / Return"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-gray-700 mb-2">Refund Number</label>
+            <input
+              type="text"
+              defaultValue="REF-20251208-003"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              disabled
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Original Sales Order *</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="">-- Select SO --</option>
+              <option>SO-JKT-20251207-001 - Toko Jaya</option>
+              <option>SO-JKT-20251206-045 - CV Sejahtera</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Customer</label>
+            <input
+              type="text"
+              value="Toko Jaya"
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Reason for Refund *</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="">-- Select Reason --</option>
+              <option>Damaged Product</option>
+              <option>Wrong Item</option>
+              <option>Quality Issue</option>
+              <option>Customer Request</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Refund Amount</label>
+            <input
+              type="number"
+              placeholder="0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Notes</label>
+            <textarea
+              rows={3}
+              placeholder="Additional details about the refund..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <button
+              onClick={() => setShowCreateRefund(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                alert('Refund created successfully!');
+                setShowCreateRefund(false);
+              }}
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            >
+              Create Refund
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
