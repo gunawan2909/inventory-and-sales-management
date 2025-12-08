@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ClipboardList } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PurchasingModule from './components/modules/PurchasingModule';
 import InventoryModule from './components/modules/InventoryModule';
@@ -11,13 +11,15 @@ import CashModule from './components/modules/CashModule';
 import AccountingModule from './components/modules/AccountingModule';
 import SecurityModule from './components/modules/SecurityModule';
 import MasterModule from './components/modules/MasterModule';
+import StockOpnameModule from './components/modules/StockOpnameModule';
 
-type ModuleType = 'dashboard' | 'purchasing' | 'inventory' | 'sales' | 'delivery' | 'ar' | 'ap' | 'cash' | 'accounting' | 'security' | 'master';
+type ModuleType = 'dashboard' | 'purchasing' | 'inventory' | 'sales' | 'delivery' | 'ar' | 'ap' | 'cash' | 'accounting' | 'security' | 'master' | 'stock-opname';
 
 const modules = [
   { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, color: 'blue' },
   { id: 'purchasing', name: 'Pembelian', icon: ShoppingCart, color: 'purple' },
   { id: 'inventory', name: 'Gudang & Inventory', icon: Warehouse, color: 'green' },
+  { id: 'stock-opname', name: 'Stock Opname', icon: ClipboardList, color: 'teal' },
   { id: 'sales', name: 'Penjualan', icon: TrendingUp, color: 'orange' },
   { id: 'delivery', name: 'Delivery/Ekspedisi', icon: Truck, color: 'cyan' },
   { id: 'ar', name: 'Piutang (A/R)', icon: Users, color: 'pink' },
@@ -37,6 +39,7 @@ export default function App() {
       case 'dashboard': return <Dashboard onNavigate={setActiveModule} />;
       case 'purchasing': return <PurchasingModule />;
       case 'inventory': return <InventoryModule />;
+      case 'stock-opname': return <StockOpnameModule />;
       case 'sales': return <SalesModule />;
       case 'delivery': return <DeliveryModule />;
       case 'ar': return <ARModule />;
@@ -54,6 +57,7 @@ export default function App() {
       dashboard: { bg: 'bg-blue-50', text: 'text-blue-600', icon: 'text-blue-600' },
       purchasing: { bg: 'bg-purple-50', text: 'text-purple-600', icon: 'text-purple-600' },
       inventory: { bg: 'bg-green-50', text: 'text-green-600', icon: 'text-green-600' },
+      'stock-opname': { bg: 'bg-teal-50', text: 'text-teal-600', icon: 'text-teal-600' },
       sales: { bg: 'bg-orange-50', text: 'text-orange-600', icon: 'text-orange-600' },
       delivery: { bg: 'bg-cyan-50', text: 'text-cyan-600', icon: 'text-cyan-600' },
       ar: { bg: 'bg-pink-50', text: 'text-pink-600', icon: 'text-pink-600' },
