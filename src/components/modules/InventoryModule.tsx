@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Package, Barcode, TrendingDown, ArrowRightLeft, AlertCircle, CheckCircle } from 'lucide-react';
+import Modal from '../Modal';
 
 const stockData = [
   { id: 1, sku: 'PRD-001', name: 'Product Alpha', category: 'Electronics', stock: 150, min: 50, max: 200, value: 15000000, status: 'normal' },
@@ -22,6 +23,7 @@ const movementData = [
 
 export default function InventoryModule() {
   const [activeTab, setActiveTab] = useState<'stock' | 'transfer' | 'movement' | 'barcode'>('stock');
+  const [showCreateTransfer, setShowCreateTransfer] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
@@ -165,7 +167,10 @@ export default function InventoryModule() {
           {activeTab === 'transfer' && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                <button
+                  onClick={() => setShowCreateTransfer(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
                   <ArrowRightLeft className="w-4 h-4" />
                   Create Transfer
                 </button>
@@ -308,6 +313,152 @@ export default function InventoryModule() {
           )}
         </div>
       </div>
+
+      {/* Create Transfer Modal */}
+      <Modal
+        isOpen={showCreateTransfer}
+        onClose={() => setShowCreateTransfer(false)}
+        title="Create Stock Transfer"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Transfer Number</label>
+              <input
+                type="text"
+                defaultValue="TR-JKT-BDG-20251208-004"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                disabled
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Transfer Date</label>
+              <input
+                type="date"
+                defaultValue="2025-12-08"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">From Location *</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">-- Select Location --</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Surabaya</option>
+                <option>Medan</option>
+                <option>Semarang</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-2">To Location *</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">-- Select Location --</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Surabaya</option>
+                <option>Medan</option>
+                <option>Semarang</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <h3 className="text-gray-900 mb-3">Items to Transfer</h3>
+            <div className="space-y-2">
+              <div className="grid grid-cols-12 gap-2 items-end">
+                <div className="col-span-5">
+                  <label className="block text-gray-700 text-sm mb-1">Product</label>
+                  <input
+                    type="text"
+                    placeholder="Search product..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-gray-700 text-sm mb-1">Available</label>
+                  <input
+                    type="text"
+                    value="150"
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-gray-700 text-sm mb-1">Qty Transfer</label>
+                  <input
+                    type="number"
+                    placeholder="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <label className="block text-gray-700 text-sm mb-1">Unit</label>
+                  <input
+                    type="text"
+                    placeholder="PCS"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <button className="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                    Add Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="text-gray-600 text-sm mb-2">Items to be transferred:</p>
+            <div className="text-center py-4 text-gray-400 text-sm">
+              No items added yet
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Notes</label>
+            <textarea
+              rows={3}
+              placeholder="Transfer notes or special instructions..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Shipping Method</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option>Company Vehicle</option>
+              <option>Third Party Courier</option>
+              <option>JNE</option>
+              <option>J&T Express</option>
+              <option>SiCepat</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <button
+              onClick={() => setShowCreateTransfer(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                alert('Stock Transfer created successfully!');
+                setShowCreateTransfer(false);
+              }}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Create Transfer
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
