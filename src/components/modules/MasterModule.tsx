@@ -15,9 +15,9 @@ const branches = [
 ];
 
 const vendors = [
-  { id: 1, code: 'V001', name: 'PT Supplier Jaya', category: 'Local', contact: 'Ahmad', phone: '0812-3456-7890', isPkp: true, rating: 4.5, status: 'Active' },
-  { id: 2, code: 'V002', name: 'CV Maju Terus', category: 'Local', contact: 'Budi', phone: '0813-9876-5432', isPkp: false, rating: 4.2, status: 'Active' },
-  { id: 3, code: 'V003', name: 'UD Sejahtera', category: 'Import', contact: 'Chandra', phone: '0821-1122-3344', isPkp: true, rating: 4.8, status: 'Active' }
+  { id: 1, code: 'V001', name: 'PT Supplier Jaya', category: 'Local', contact: 'Ahmad', phone: '0812-3456-7890', isPkp: true, status: 'Active' },
+  { id: 2, code: 'V002', name: 'CV Maju Terus', category: 'Local', contact: 'Budi', phone: '0813-9876-5432', isPkp: false, status: 'Active' },
+  { id: 3, code: 'V003', name: 'UD Sejahtera', category: 'Import', contact: 'Chandra', phone: '0821-1122-3344', isPkp: true, status: 'Active' }
 ];
 
 const customers = [
@@ -514,31 +514,16 @@ export default function MasterModule() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  defaultValue={selectedItem?.phone || ''}
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                <input
-                  type="number"
-                  name="rating"
-                  step="0.1"
-                  min="0"
-                  max="5"
-                  defaultValue={selectedItem?.rating || 0}
-                  disabled={isViewMode}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input
+                type="tel"
+                name="phone"
+                defaultValue={selectedItem?.phone || ''}
+                disabled={isViewMode}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                required
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -712,6 +697,120 @@ export default function MasterModule() {
       );
     }
 
+    if (activeTab === 'pricing') {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveItem(new FormData(e.currentTarget)); }}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Price List Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={selectedItem?.name || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Price List Code</label>
+                <input
+                  type="text"
+                  name="code"
+                  defaultValue={selectedItem?.code || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  name="type"
+                  defaultValue={selectedItem?.type || 'Standard'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Standard</option>
+                  <option>Volume</option>
+                  <option>Special</option>
+                  <option>Dealer</option>
+                  <option>Channel</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Markup (%)</label>
+                <input
+                  type="number"
+                  name="markup"
+                  defaultValue={selectedItem?.markup || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                name="description"
+                defaultValue={selectedItem?.description || ''}
+                disabled={isViewMode}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Number of Products</label>
+                <input
+                  type="number"
+                  name="products"
+                  defaultValue={selectedItem?.products || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  name="status"
+                  defaultValue={selectedItem?.status || 'Active'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+            {!isViewMode && (
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      );
+    }
+
     return null;
   };
 
@@ -721,7 +820,8 @@ export default function MasterModule() {
     const entity = activeTab === 'products' ? 'Product' :
                    activeTab === 'branches' ? 'Branch' :
                    activeTab === 'vendors' ? 'Vendor' :
-                   activeTab === 'customers' ? 'Customer' : '';
+                   activeTab === 'customers' ? 'Customer' :
+                   activeTab === 'pricing' ? 'Price List' : '';
     return `${action} ${entity}`;
   };
 
@@ -1033,7 +1133,6 @@ export default function MasterModule() {
                       <th className="text-left py-3 px-4 text-gray-600">Contact Person</th>
                       <th className="text-left py-3 px-4 text-gray-600">Phone</th>
                       <th className="text-center py-3 px-4 text-gray-600">PKP</th>
-                      <th className="text-center py-3 px-4 text-gray-600">Rating</th>
                       <th className="text-center py-3 px-4 text-gray-600">Status</th>
                       <th className="text-center py-3 px-4 text-gray-600">Actions</th>
                     </tr>
@@ -1052,11 +1151,6 @@ export default function MasterModule() {
                           ) : (
                             <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">Non-PKP</span>
                           )}
-                        </td>
-                        <td className="py-3 px-4 text-center">
-                          <span className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-sm">
-                            ★ {vendor.rating}
-                          </span>
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">{vendor.status}</span>
@@ -1209,7 +1303,10 @@ export default function MasterModule() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-gray-900 font-medium">Price List Management</h3>
-                    <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                    <button
+                      onClick={() => handleOpenModal('add')}
+                      className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                    >
                       Create New Price List
                     </button>
                   </div>
@@ -1240,9 +1337,29 @@ export default function MasterModule() {
                               <span className="font-medium text-green-700">+{priceList.markup}%</span> markup
                             </span>
                           </div>
-                          <button className="text-amber-600 hover:text-amber-700 text-sm font-medium">
-                            Edit
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleOpenModal('view', priceList)}
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                              title="View"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleOpenModal('edit', priceList)}
+                              className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(priceList.id)}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1286,60 +1403,76 @@ export default function MasterModule() {
                   {/* Margin Configuration */}
                   <div className="bg-white rounded-lg border border-gray-200 p-4">
                     <h4 className="text-gray-900 font-medium mb-4">Margin Configuration</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Target Margin (%)</label>
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      console.log('Saving margin config:', Object.fromEntries(formData));
+                      // TODO: Implement actual save logic
+                      alert('Margin configuration saved successfully!');
+                    }}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm text-gray-600 mb-1">Target Margin (%)</label>
+                          <input
+                            type="number"
+                            name="targetMargin"
+                            defaultValue={marginConfig.targetMargin}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-600 mb-1">Minimum Margin (%)</label>
+                          <input
+                            type="number"
+                            name="minimumMargin"
+                            defaultValue={marginConfig.minimumMargin}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-600 mb-1">Warning Threshold (%)</label>
+                          <input
+                            type="number"
+                            name="warningThreshold"
+                            defaultValue={marginConfig.warningThreshold}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-600 mb-1">Price Rounding</label>
+                          <select
+                            name="priceRoundingRule"
+                            defaultValue={marginConfig.priceRoundingRule}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                          >
+                            <option value="nearest_100">Nearest 100</option>
+                            <option value="nearest_1000">Nearest 1,000</option>
+                            <option value="nearest_5000">Nearest 5,000</option>
+                            <option value="nearest_10000">Nearest 10,000</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2">
                         <input
-                          type="number"
-                          defaultValue={marginConfig.targetMargin}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                          type="checkbox"
+                          id="autoUpdate"
+                          name="autoUpdatePricing"
+                          defaultChecked={marginConfig.autoUpdatePricing}
+                          className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
+                        <label htmlFor="autoUpdate" className="text-sm text-gray-700">
+                          Automatically update pricing when cost changes
+                        </label>
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Minimum Margin (%)</label>
-                        <input
-                          type="number"
-                          defaultValue={marginConfig.minimumMargin}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                        />
+                      <div className="mt-4 flex justify-end">
+                        <button type="submit" className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                          Save Configuration
+                        </button>
                       </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Warning Threshold (%)</label>
-                        <input
-                          type="number"
-                          defaultValue={marginConfig.warningThreshold}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 mb-1">Price Rounding</label>
-                        <select
-                          defaultValue={marginConfig.priceRoundingRule}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                        >
-                          <option value="nearest_100">Nearest 100</option>
-                          <option value="nearest_1000">Nearest 1,000</option>
-                          <option value="nearest_5000">Nearest 5,000</option>
-                          <option value="nearest_10000">Nearest 10,000</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="autoUpdate"
-                        defaultChecked={marginConfig.autoUpdatePricing}
-                        className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                      />
-                      <label htmlFor="autoUpdate" className="text-sm text-gray-700">
-                        Automatically update pricing when cost changes
-                      </label>
-                    </div>
-                    <div className="mt-4 flex justify-end">
-                      <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
-                        Save Configuration
-                      </button>
-                    </div>
+                    </form>
                   </div>
 
                   {/* Products by Margin */}
@@ -1392,7 +1525,14 @@ export default function MasterModule() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-gray-900 font-medium">Price Change History</h3>
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    <button
+                      onClick={() => {
+                        // TODO: Implement actual export logic
+                        console.log('Exporting price history');
+                        alert('Export price history to file');
+                      }}
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    >
                       Export History
                     </button>
                   </div>
@@ -1467,74 +1607,95 @@ export default function MasterModule() {
                     {/* Update by Category */}
                     <div className="bg-white rounded-lg border border-gray-200 p-4">
                       <h4 className="text-gray-900 font-medium mb-4">Update by Category</h4>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Select Category</label>
-                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
-                            <option>Electronics</option>
-                            <option>Accessories</option>
-                            <option>All Categories</option>
-                          </select>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.currentTarget);
+                        console.log('Preview bulk update:', Object.fromEntries(formData));
+                        // TODO: Implement actual preview logic
+                        alert('Preview bulk update by category');
+                      }}>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Select Category</label>
+                            <select name="category" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                              <option>Electronics</option>
+                              <option>Accessories</option>
+                              <option>All Categories</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Adjustment Type</label>
+                            <select name="adjustmentType" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                              <option>Percentage Increase</option>
+                              <option>Percentage Decrease</option>
+                              <option>Fixed Amount Increase</option>
+                              <option>Fixed Amount Decrease</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Value</label>
+                            <input
+                              type="number"
+                              name="value"
+                              placeholder="Enter value"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                              required
+                            />
+                          </div>
+                          <button type="submit" className="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                            Preview Changes
+                          </button>
                         </div>
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Adjustment Type</label>
-                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
-                            <option>Percentage Increase</option>
-                            <option>Percentage Decrease</option>
-                            <option>Fixed Amount Increase</option>
-                            <option>Fixed Amount Decrease</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Value</label>
-                          <input
-                            type="number"
-                            placeholder="Enter value"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                          />
-                        </div>
-                        <button className="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
-                          Preview Changes
-                        </button>
-                      </div>
+                      </form>
                     </div>
 
                     {/* Update by Margin Target */}
                     <div className="bg-white rounded-lg border border-gray-200 p-4">
                       <h4 className="text-gray-900 font-medium mb-4">Update to Target Margin</h4>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Filter Products</label>
-                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
-                            <option>All Products</option>
-                            <option>Below Minimum Margin</option>
-                            <option>Below Target Margin</option>
-                            <option>By Category</option>
-                          </select>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.currentTarget);
+                        console.log('Calculate new prices:', Object.fromEntries(formData));
+                        // TODO: Implement actual calculation logic
+                        alert('Calculate new prices based on target margin');
+                      }}>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Filter Products</label>
+                            <select name="filter" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500">
+                              <option>All Products</option>
+                              <option>Below Minimum Margin</option>
+                              <option>Below Target Margin</option>
+                              <option>By Category</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Target Margin (%)</label>
+                            <input
+                              type="number"
+                              name="targetMargin"
+                              defaultValue={marginConfig.targetMargin}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm text-gray-600 mb-1">Rounding Rule</label>
+                            <select
+                              name="roundingRule"
+                              defaultValue={marginConfig.priceRoundingRule}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
+                            >
+                              <option value="nearest_100">Nearest 100</option>
+                              <option value="nearest_1000">Nearest 1,000</option>
+                              <option value="nearest_5000">Nearest 5,000</option>
+                            </select>
+                          </div>
+                          <button type="submit" className="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                            Calculate New Prices
+                          </button>
                         </div>
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Target Margin (%)</label>
-                          <input
-                            type="number"
-                            defaultValue={marginConfig.targetMargin}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm text-gray-600 mb-1">Rounding Rule</label>
-                          <select
-                            defaultValue={marginConfig.priceRoundingRule}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500"
-                          >
-                            <option value="nearest_100">Nearest 100</option>
-                            <option value="nearest_1000">Nearest 1,000</option>
-                            <option value="nearest_5000">Nearest 5,000</option>
-                          </select>
-                        </div>
-                        <button className="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
-                          Calculate New Prices
-                        </button>
-                      </div>
+                      </form>
                     </div>
                   </div>
 
@@ -1544,13 +1705,26 @@ export default function MasterModule() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-600 mb-3">Import prices from Excel/CSV file</p>
-                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <button
+                          onClick={() => {
+                            // TODO: Implement actual import logic
+                            alert('Import prices from file');
+                          }}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                        >
                           Import from File
                         </button>
                       </div>
                       <div>
                         <p className="text-sm text-gray-600 mb-3">Export current prices to Excel/CSV</p>
-                        <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <button
+                          onClick={() => {
+                            // TODO: Implement actual export logic
+                            console.log('Exporting prices to file');
+                            alert('Export prices to file');
+                          }}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                        >
                           Export to File
                         </button>
                       </div>
