@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
-import { Package, Building2, Users, Store, DollarSign, Search, TrendingUp, Percent, History } from 'lucide-react';
+import { Package, Building2, Users, Store, DollarSign, Search, TrendingUp, Percent, History, Eye, Edit2, Trash2 } from 'lucide-react';
+import Modal from '../Modal';
 
 const products = [
   { id: 1, sku: 'PRD-001', name: 'Product Alpha', category: 'Electronics', brand: 'Brand A', price: 135000, cost: 100000, margin: 25.9, stock: 150, status: 'Active' },
@@ -87,6 +88,11 @@ export default function MasterModule() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'add' | 'edit' | 'view'>('add');
+  const [selectedItem, setSelectedItem] = useState<any>(null);
 
   // Memoized filtered products with search
   const filteredProducts = useMemo(() => {
@@ -176,6 +182,31 @@ export default function MasterModule() {
     setCurrentPage(page);
   }, []);
 
+  // Modal handlers
+  const handleOpenModal = useCallback((mode: 'add' | 'edit' | 'view', item?: any) => {
+    setModalMode(mode);
+    setSelectedItem(item || null);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  }, []);
+
+  const handleSaveItem = useCallback((formData: any) => {
+    // TODO: Implement actual save logic (API call, state management, etc.)
+    console.log('Saving item:', formData);
+    handleCloseModal();
+  }, [handleCloseModal]);
+
+  const handleDeleteItem = useCallback((id: number) => {
+    // TODO: Implement actual delete logic (API call, state management, etc.)
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      console.log('Deleting item:', id);
+    }
+  }, []);
+
   // Calculate margin statistics
   const marginStats = useMemo(() => {
     const avgMargin = products.reduce((sum, p) => sum + p.margin, 0) / products.length;
@@ -183,6 +214,516 @@ export default function MasterModule() {
     const targetMarginCount = products.filter(p => p.margin >= marginConfig.targetMargin).length;
     return { avgMargin, lowMarginCount, targetMarginCount };
   }, []);
+
+  // Render modal content based on active tab and mode
+  const renderModalContent = () => {
+    const isViewMode = modalMode === 'view';
+    const isEditMode = modalMode === 'edit';
+    const isAddMode = modalMode === 'add';
+
+    if (activeTab === 'products') {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveItem(new FormData(e.currentTarget)); }}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+                <input
+                  type="text"
+                  name="sku"
+                  defaultValue={selectedItem?.sku || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={selectedItem?.name || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  name="category"
+                  defaultValue={selectedItem?.category || 'Electronics'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Electronics</option>
+                  <option>Accessories</option>
+                  <option>Fashion</option>
+                  <option>Home & Living</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                <input
+                  type="text"
+                  name="brand"
+                  defaultValue={selectedItem?.brand || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Cost (Rp)</label>
+                <input
+                  type="number"
+                  name="cost"
+                  defaultValue={selectedItem?.cost || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rp)</label>
+                <input
+                  type="number"
+                  name="price"
+                  defaultValue={selectedItem?.price || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                <input
+                  type="number"
+                  name="stock"
+                  defaultValue={selectedItem?.stock || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  name="status"
+                  defaultValue={selectedItem?.status || 'Active'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Active</option>
+                  <option>Inactive</option>
+                  <option>Out of Stock</option>
+                </select>
+              </div>
+            </div>
+            {!isViewMode && (
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      );
+    }
+
+    if (activeTab === 'branches') {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveItem(new FormData(e.currentTarget)); }}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                <input
+                  type="text"
+                  name="code"
+                  defaultValue={selectedItem?.code || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Branch Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={selectedItem?.name || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  name="type"
+                  defaultValue={selectedItem?.type || 'Branch'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>HQ</option>
+                  <option>Branch</option>
+                  <option>Warehouse</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Manager</label>
+                <input
+                  type="text"
+                  name="manager"
+                  defaultValue={selectedItem?.manager || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input
+                type="text"
+                name="address"
+                defaultValue={selectedItem?.address || ''}
+                disabled={isViewMode}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  defaultValue={selectedItem?.phone || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  name="status"
+                  defaultValue={selectedItem?.status || 'Active'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+            {!isViewMode && (
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      );
+    }
+
+    if (activeTab === 'vendors') {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveItem(new FormData(e.currentTarget)); }}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Code</label>
+                <input
+                  type="text"
+                  name="code"
+                  defaultValue={selectedItem?.code || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={selectedItem?.name || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  name="category"
+                  defaultValue={selectedItem?.category || 'Local'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Local</option>
+                  <option>Import</option>
+                  <option>Distributor</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <input
+                  type="text"
+                  name="contact"
+                  defaultValue={selectedItem?.contact || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  defaultValue={selectedItem?.phone || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                <input
+                  type="number"
+                  name="rating"
+                  step="0.1"
+                  min="0"
+                  max="5"
+                  defaultValue={selectedItem?.rating || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="isPkp"
+                    defaultChecked={selectedItem?.isPkp || false}
+                    disabled={isViewMode}
+                    className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">PKP (Pengusaha Kena Pajak)</span>
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  name="status"
+                  defaultValue={selectedItem?.status || 'Active'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+            {!isViewMode && (
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      );
+    }
+
+    if (activeTab === 'customers') {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveItem(new FormData(e.currentTarget)); }}>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Customer Code</label>
+                <input
+                  type="text"
+                  name="code"
+                  defaultValue={selectedItem?.code || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={selectedItem?.name || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  name="category"
+                  defaultValue={selectedItem?.category || 'Retail'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Retail</option>
+                  <option>Wholesale</option>
+                  <option>VIP</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <input
+                  type="text"
+                  name="contact"
+                  defaultValue={selectedItem?.contact || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  defaultValue={selectedItem?.phone || ''}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Credit Limit (Rp)</label>
+                <input
+                  type="number"
+                  name="creditLimit"
+                  defaultValue={selectedItem?.creditLimit || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Outstanding (Rp)</label>
+                <input
+                  type="number"
+                  name="outstanding"
+                  defaultValue={selectedItem?.outstanding || 0}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  name="status"
+                  defaultValue={selectedItem?.status || 'Active'}
+                  disabled={isViewMode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 disabled:bg-gray-100"
+                >
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+            </div>
+            {!isViewMode && (
+              <div className="flex justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      );
+    }
+
+    return null;
+  };
+
+  // Get modal title based on active tab and mode
+  const getModalTitle = () => {
+    const action = modalMode === 'add' ? 'Add' : modalMode === 'edit' ? 'Edit' : 'View';
+    const entity = activeTab === 'products' ? 'Product' :
+                   activeTab === 'branches' ? 'Branch' :
+                   activeTab === 'vendors' ? 'Vendor' :
+                   activeTab === 'customers' ? 'Customer' : '';
+    return `${action} ${entity}`;
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -278,7 +819,10 @@ export default function MasterModule() {
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                   />
                 </div>
-                <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                <button
+                  onClick={() => handleOpenModal('add')}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
                   Add Product
                 </button>
               </div>
@@ -295,16 +839,66 @@ export default function MasterModule() {
                       <th className="text-center py-3 px-4 text-gray-600">Margin %</th>
                       <th className="text-center py-3 px-4 text-gray-600">Stock</th>
                       <th className="text-center py-3 px-4 text-gray-600">Status</th>
+                      <th className="text-center py-3 px-4 text-gray-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredProducts.length > 0 ? (
                       filteredProducts.map((product) => (
-                        <ProductRow key={product.id} product={product} />
+                        <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-4 text-gray-900">{product.sku}</td>
+                          <td className="py-3 px-4 text-gray-900">{product.name}</td>
+                          <td className="py-3 px-4 text-gray-700">{product.category}</td>
+                          <td className="py-3 px-4 text-gray-700">{product.brand}</td>
+                          <td className="py-3 px-4 text-right text-gray-900">Rp {(product.price / 1000).toFixed(0)}K</td>
+                          <td className="py-3 px-4 text-right text-gray-700">Rp {(product.cost / 1000).toFixed(0)}K</td>
+                          <td className="py-3 px-4 text-center">
+                            <span className={`px-2 py-1 rounded text-sm ${
+                              product.margin > 25 ? 'bg-green-100 text-green-700' :
+                              product.margin > 15 ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {product.margin.toFixed(1)}%
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-center text-gray-900">{product.stock}</td>
+                          <td className="py-3 px-4 text-center">
+                            <span className={`px-2 py-1 rounded text-sm ${
+                              product.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                            }`}>
+                              {product.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleOpenModal('view', product)}
+                                className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                                title="View"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleOpenModal('edit', product)}
+                                className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteItem(product.id)}
+                                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={9} className="py-8 text-center text-gray-500">
+                        <td colSpan={10} className="py-8 text-center text-gray-500">
                           No products found
                         </td>
                       </tr>
@@ -345,7 +939,10 @@ export default function MasterModule() {
           {activeTab === 'branches' && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                <button
+                  onClick={() => handleOpenModal('add')}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
                   Add Branch
                 </button>
               </div>
@@ -360,6 +957,7 @@ export default function MasterModule() {
                       <th className="text-left py-3 px-4 text-gray-600">Phone</th>
                       <th className="text-left py-3 px-4 text-gray-600">Manager</th>
                       <th className="text-center py-3 px-4 text-gray-600">Status</th>
+                      <th className="text-center py-3 px-4 text-gray-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -382,6 +980,31 @@ export default function MasterModule() {
                         <td className="py-3 px-4 text-center">
                           <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">{branch.status}</span>
                         </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleOpenModal('view', branch)}
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                              title="View"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleOpenModal('edit', branch)}
+                              className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(branch.id)}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -393,7 +1016,10 @@ export default function MasterModule() {
           {activeTab === 'vendors' && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                <button
+                  onClick={() => handleOpenModal('add')}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
                   Add Vendor
                 </button>
               </div>
@@ -409,6 +1035,7 @@ export default function MasterModule() {
                       <th className="text-center py-3 px-4 text-gray-600">PKP</th>
                       <th className="text-center py-3 px-4 text-gray-600">Rating</th>
                       <th className="text-center py-3 px-4 text-gray-600">Status</th>
+                      <th className="text-center py-3 px-4 text-gray-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -434,6 +1061,31 @@ export default function MasterModule() {
                         <td className="py-3 px-4 text-center">
                           <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">{vendor.status}</span>
                         </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleOpenModal('view', vendor)}
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                              title="View"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleOpenModal('edit', vendor)}
+                              className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(vendor.id)}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -445,7 +1097,10 @@ export default function MasterModule() {
           {activeTab === 'customers' && (
             <div className="space-y-4">
               <div className="flex justify-end">
-                <button className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700">
+                <button
+                  onClick={() => handleOpenModal('add')}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                >
                   Add Customer
                 </button>
               </div>
@@ -461,6 +1116,7 @@ export default function MasterModule() {
                       <th className="text-right py-3 px-4 text-gray-600">Credit Limit</th>
                       <th className="text-right py-3 px-4 text-gray-600">Outstanding</th>
                       <th className="text-center py-3 px-4 text-gray-600">Status</th>
+                      <th className="text-center py-3 px-4 text-gray-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -487,6 +1143,31 @@ export default function MasterModule() {
                         </td>
                         <td className="py-3 px-4 text-center">
                           <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">{customer.status}</span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleOpenModal('view', customer)}
+                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                              title="View"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleOpenModal('edit', customer)}
+                              className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(customer.id)}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -881,6 +1562,16 @@ export default function MasterModule() {
           )}
         </div>
       </div>
+
+      {/* Modal for Add/Edit/View */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={getModalTitle()}
+        size="lg"
+      >
+        {renderModalContent()}
+      </Modal>
     </div>
   );
 }
