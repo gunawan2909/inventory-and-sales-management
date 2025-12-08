@@ -82,13 +82,11 @@ export default function App() {
           {/* Logo */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-white" />
-              </div>
+              <img src="/assets/logo.svg" alt="MERCY Logo" className="w-10 h-10" />
               {sidebarOpen && (
                 <div>
-                  <h1 className="text-gray-900">ERP System</h1>
-                  <p className="text-xs text-gray-500">v1.0</p>
+                  <h1 className="text-sm font-bold text-gray-900">MERCY</h1>
+                  <p className="text-xs text-gray-500">Medimart ERP v1.0</p>
                 </div>
               )}
             </div>

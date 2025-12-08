@@ -125,7 +125,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       {/* Header */}
       <div>
         <h1 className="text-gray-900 mb-1">Dashboard Overview</h1>
-        <p className="text-gray-600">Sistem Manajemen Inventory & Penjualan - Version 1.0</p>
+        <p className="text-gray-600">Medimart Enterprise Resource System - Version 1.0</p>
       </div>
 
       {/* Key Metrics */}
