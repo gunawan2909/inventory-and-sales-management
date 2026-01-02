@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ClipboardList, CheckSquare } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PurchasingModule from './components/modules/PurchasingModule';
 import InventoryModule from './components/modules/InventoryModule';
@@ -10,10 +10,11 @@ import APModule from './components/modules/APModule';
 import CashModule from './components/modules/CashModule';
 import AccountingModule from './components/modules/AccountingModule';
 import SecurityModule from './components/modules/SecurityModule';
+import ApprovalModule from './components/modules/ApprovalModule';
 import MasterModule from './components/modules/MasterModule';
 import StockOpnameModule from './components/modules/StockOpnameModule';
 
-type ModuleType = 'dashboard' | 'purchasing' | 'inventory' | 'sales' | 'delivery' | 'ar' | 'ap' | 'cash' | 'accounting' | 'security' | 'master' | 'stock-opname';
+type ModuleType = 'dashboard' | 'purchasing' | 'inventory' | 'sales' | 'delivery' | 'ar' | 'ap' | 'cash' | 'accounting' | 'security' | 'approval' | 'master' | 'stock-opname';
 
 const modules = [
   { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, color: 'blue' },
@@ -26,7 +27,8 @@ const modules = [
   { id: 'ap', name: 'Hutang (A/P)', icon: CreditCard, color: 'red' },
   { id: 'cash', name: 'Kas & Operasional', icon: Wallet, color: 'emerald' },
   { id: 'accounting', name: 'Akuntansi (GL)', icon: BookOpen, color: 'indigo' },
-  { id: 'security', name: 'Security & Approval', icon: Shield, color: 'slate' },
+  { id: 'security', name: 'Security', icon: Shield, color: 'slate' },
+  { id: 'approval', name: 'Workflow Approval', icon: CheckSquare, color: 'blue' },
   { id: 'master', name: 'Master Data', icon: Database, color: 'amber' }
 ];
 
@@ -47,6 +49,7 @@ export default function App() {
       case 'cash': return <CashModule />;
       case 'accounting': return <AccountingModule />;
       case 'security': return <SecurityModule />;
+      case 'approval': return <ApprovalModule />;
       case 'master': return <MasterModule />;
       default: return <Dashboard onNavigate={setActiveModule} />;
     }
@@ -65,6 +68,7 @@ export default function App() {
       cash: { bg: 'bg-emerald-50', text: 'text-emerald-600', icon: 'text-emerald-600' },
       accounting: { bg: 'bg-indigo-50', text: 'text-indigo-600', icon: 'text-indigo-600' },
       security: { bg: 'bg-slate-50', text: 'text-slate-600', icon: 'text-slate-600' },
+      approval: { bg: 'bg-blue-50', text: 'text-blue-600', icon: 'text-blue-600' },
       master: { bg: 'bg-amber-50', text: 'text-amber-600', icon: 'text-amber-600' }
     };
     

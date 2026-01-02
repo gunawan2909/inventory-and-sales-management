@@ -1,4 +1,4 @@
-import { ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ArrowUpRight, ArrowDownRight, AlertCircle } from 'lucide-react';
+import { ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ArrowUpRight, ArrowDownRight, AlertCircle, CheckSquare } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (module: string) => void;
@@ -44,7 +44,7 @@ const moduleCards = [
     icon: Truck,
     color: 'cyan',
     stats: '23 In Transit',
-    description: 'Picking, Packing, Pengiriman'
+    description: 'Packing, Pengiriman'
   },
   {
     id: 'ar',
@@ -52,7 +52,7 @@ const moduleCards = [
     icon: Users,
     color: 'pink',
     stats: 'Rp 890K Due',
-    description: 'Aging, Collection, Matching'
+    description: 'Aging, Collection, Payment Upload'
   },
   {
     id: 'ap',
@@ -80,11 +80,19 @@ const moduleCards = [
   },
   {
     id: 'security',
-    name: 'Security & Approval',
+    name: 'Security',
     icon: Shield,
     color: 'slate',
+    stats: '0 Threats',
+    description: '2FA, Audit Log, Settings'
+  },
+  {
+    id: 'approval',
+    name: 'Workflow Approval',
+    icon: CheckSquare,
+    color: 'blue',
     stats: '12 Pending',
-    description: '2FA, Approval, Audit Log'
+    description: 'Approval Request, History'
   },
   {
     id: 'master',
@@ -98,7 +106,7 @@ const moduleCards = [
 
 const alerts = [
   { type: 'warning', message: '15 items low stock alert', module: 'inventory' },
-  { type: 'info', message: '12 approvals pending', module: 'security' },
+  { type: 'info', message: '12 approvals pending', module: 'approval' },
   { type: 'warning', message: '8 invoices overdue > 30 days', module: 'ar' },
   { type: 'success', message: '23 deliveries on schedule', module: 'delivery' }
 ];
@@ -115,7 +123,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       emerald: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
       indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600' },
       slate: { bg: 'bg-slate-100', text: 'text-slate-600' },
-      amber: { bg: 'bg-amber-100', text: 'text-amber-600' }
+      amber: { bg: 'bg-amber-100', text: 'text-amber-600' },
+      blue: { bg: 'bg-blue-100', text: 'text-blue-600' }
     };
     return colorMap[color] || colorMap.purple;
   };

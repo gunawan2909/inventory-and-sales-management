@@ -19,14 +19,14 @@ const paymentUploads = [
 ];
 
 export default function ARModule() {
-  const [activeTab, setActiveTab] = useState<'aging' | 'collection' | 'upload' | 'matching'>('aging');
+  const [activeTab, setActiveTab] = useState<'aging' | 'collection' | 'upload'>('aging');
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-gray-900 mb-1">Modul Piutang (A/R)</h1>
-          <p className="text-gray-600">Aging, Collection, Payment Upload & Matching</p>
+          <p className="text-gray-600">Aging, Collection, Payment Upload</p>
         </div>
       </div>
 
@@ -97,12 +97,6 @@ export default function ARModule() {
               className={`px-4 py-2 rounded-lg transition-colors ${activeTab === 'upload' ? 'bg-pink-50 text-pink-600' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               Upload Bukti Transfer
-            </button>
-            <button
-              onClick={() => setActiveTab('matching')}
-              className={`px-4 py-2 rounded-lg transition-colors ${activeTab === 'matching' ? 'bg-pink-50 text-pink-600' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Auto Matching
             </button>
           </div>
         </div>
@@ -234,17 +228,6 @@ export default function ARModule() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'matching' && (
-            <div className="text-center py-12">
-              <CheckCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-gray-700 mb-2">Auto Payment Matching</h3>
-              <p className="text-gray-500 mb-4">Automatically match bank transactions with invoices</p>
-              <button className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">
-                Run Auto Matching
-              </button>
             </div>
           )}
         </div>

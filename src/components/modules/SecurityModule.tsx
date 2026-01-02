@@ -19,13 +19,13 @@ const otpRequests = [
 ];
 
 export default function SecurityModule() {
-  const [activeTab, setActiveTab] = useState<'otp' | 'approval' | 'audit' | 'settings'>('otp');
+  const [activeTab, setActiveTab] = useState<'otp' | 'audit' | 'settings'>('otp');
 
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-gray-900 mb-1">Modul Security & Approval</h1>
-        <p className="text-gray-600">2FA/OTP, Workflow Approval, Audit Log, Settings</p>
+        <h1 className="text-gray-900 mb-1">Modul Security</h1>
+        <p className="text-gray-600">2FA/OTP, Audit Log, Settings</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -78,13 +78,13 @@ export default function SecurityModule() {
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div className="border-b border-gray-200">
           <div className="flex gap-4 p-4">
-            {['otp', 'approval', 'audit', 'settings'].map((tab) => (
+            {['otp', 'audit', 'settings'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
                 className={`px-4 py-2 rounded-lg transition-colors capitalize ${activeTab === tab ? 'bg-slate-50 text-slate-600' : 'text-gray-600 hover:bg-gray-50'}`}
               >
-                {tab === 'otp' ? 'OTP/2FA' : tab === 'approval' ? 'Workflow Approvals' : tab === 'audit' ? 'Audit Log' : 'Security Settings'}
+                {tab === 'otp' ? 'OTP/2FA' : tab === 'audit' ? 'Audit Log' : 'Security Settings'}
               </button>
             ))}
           </div>
@@ -130,56 +130,6 @@ export default function SecurityModule() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'approval' && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-gray-600">Type</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Reference</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Requested By</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Reason</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Status</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {approvals.map((approval) => (
-                    <tr key={approval.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-900">{approval.type}</td>
-                      <td className="py-3 px-4 text-gray-700">{approval.reference}</td>
-                      <td className="py-3 px-4 text-gray-700">{approval.user}</td>
-                      <td className="py-3 px-4 text-gray-700">{approval.reason}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`px-2 py-1 rounded text-sm ${
-                          approval.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
-                          approval.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                          'bg-yellow-100 text-yellow-700'
-                        }`}>
-                          {approval.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        {approval.status === 'PENDING' ? (
-                          <div className="flex gap-2 justify-center">
-                            <button className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
-                              Approve
-                            </button>
-                            <button className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">
-                              Reject
-                            </button>
-                          </div>
-                        ) : (
-                          <button className="text-slate-600 hover:text-slate-700">View</button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           )}
 
