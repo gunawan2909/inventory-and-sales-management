@@ -28,6 +28,7 @@ export default function PurchasingModule() {
   const [selectedPO, setSelectedPO] = useState<any>(null);
   const [showVendorDetails, setShowVendorDetails] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
 
   return (
     <div className="p-6 space-y-6">
@@ -483,6 +484,21 @@ export default function PurchasingModule() {
               </div>
             </div>
 
+            <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+              <h3 className="text-gray-900 mb-3 font-semibold">Invoice Information</h3>
+              <div>
+                <label className="block text-gray-700 mb-2">Invoice Number</label>
+                <input
+                  type="text"
+                  value={invoiceNumber}
+                  onChange={(e) => setInvoiceNumber(e.target.value)}
+                  placeholder="Enter invoice number..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <p className="text-gray-600 text-sm mt-1">Input nomor invoice dari vendor untuk PO ini</p>
+              </div>
+            </div>
+
             <div>
               <h3 className="text-gray-900 mb-2">Items</h3>
               <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -526,13 +542,29 @@ export default function PurchasingModule() {
 
             <div className="flex gap-3 justify-end pt-4 border-t">
               <button
-                onClick={() => setShowViewPO(false)}
+                onClick={() => {
+                  setShowViewPO(false);
+                  setInvoiceNumber('');
+                }}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
                 Close
               </button>
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Print PDF
+              </button>
+              <button
+                onClick={() => {
+                  if (invoiceNumber.trim()) {
+                    alert(`Invoice number ${invoiceNumber} saved successfully for ${selectedPO.poNumber}!`);
+                    setInvoiceNumber('');
+                  } else {
+                    alert('Please enter an invoice number');
+                  }
+                }}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              >
+                Save Invoice
               </button>
             </div>
           </div>
