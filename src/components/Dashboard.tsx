@@ -44,7 +44,7 @@ const moduleCards = [
     icon: Truck,
     color: 'cyan',
     stats: '23 In Transit',
-    description: 'Picking, Packing, Pengiriman'
+    description: 'Packing, Pengiriman'
   },
   {
     id: 'ar',
@@ -52,7 +52,7 @@ const moduleCards = [
     icon: Users,
     color: 'pink',
     stats: 'Rp 890K Due',
-    description: 'Aging, Collection, Matching'
+    description: 'Aging, Collection, Payment Upload'
   },
   {
     id: 'ap',
@@ -84,7 +84,7 @@ const moduleCards = [
     icon: Shield,
     color: 'slate',
     stats: '12 Pending',
-    description: '2FA, Approval, Audit Log'
+    description: '2FA, Audit Log, Settings'
   },
   {
     id: 'master',
