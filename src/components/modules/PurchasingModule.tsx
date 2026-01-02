@@ -284,7 +284,6 @@ export default function PurchasingModule() {
                     <th className="text-left py-3 px-4 text-gray-600">Invoice Date</th>
                     <th className="text-left py-3 px-4 text-gray-600">Due Date</th>
                     <th className="text-right py-3 px-4 text-gray-600">Amount</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Status</th>
                     <th className="text-center py-3 px-4 text-gray-600">Action</th>
                   </tr>
                 </thead>
@@ -298,15 +297,6 @@ export default function PurchasingModule() {
                       <td className="py-3 px-4 text-gray-700">{invoice.dueDate}</td>
                       <td className="py-3 px-4 text-right text-gray-900">
                         Rp {(invoice.amount / 1000000).toFixed(1)}M
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`px-2 py-1 rounded text-sm ${
-                          invoice.status === 'PAID' ? 'bg-green-100 text-green-700' :
-                          invoice.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
-                          {invoice.status}
-                        </span>
                       </td>
                       <td className="py-3 px-4 text-center">
                         <button className="text-purple-600 hover:text-purple-700">
