@@ -32,7 +32,9 @@ export default function PurchasingModule() {
   const [showCreatePO, setShowCreatePO] = useState(false);
   const [showCreateInvoice, setShowCreateInvoice] = useState(false);
   const [showViewPO, setShowViewPO] = useState(false);
+  const [showViewInvoice, setShowViewInvoice] = useState(false);
   const [selectedPO, setSelectedPO] = useState<any>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [showVendorDetails, setShowVendorDetails] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
 
@@ -299,7 +301,13 @@ export default function PurchasingModule() {
                         Rp {(invoice.amount / 1000000).toFixed(1)}M
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <button className="text-purple-600 hover:text-purple-700">
+                        <button
+                          onClick={() => {
+                            setSelectedInvoice(invoice);
+                            setShowViewInvoice(true);
+                          }}
+                          className="text-purple-600 hover:text-purple-700"
+                        >
                           View
                         </button>
                       </td>
@@ -735,6 +743,106 @@ export default function PurchasingModule() {
             <div className="flex gap-3 justify-end pt-4 border-t">
               <button
                 onClick={() => setShowViewPO(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Print PDF
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* View Invoice Modal */}
+      <Modal
+        isOpen={showViewInvoice}
+        onClose={() => setShowViewInvoice(false)}
+        title="Invoice Details"
+        size="lg"
+      >
+        {selectedInvoice && (
+          <div className="space-y-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-600 text-sm">Invoice Number</p>
+                  <p className="text-gray-900">{selectedInvoice.invoiceNumber}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">PO Number</p>
+                  <p className="text-gray-900">{selectedInvoice.poNumber}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Vendor</p>
+                  <p className="text-gray-900">{selectedInvoice.vendor}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Invoice Date</p>
+                  <p className="text-gray-900">{selectedInvoice.date}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Due Date</p>
+                  <p className="text-gray-900">{selectedInvoice.dueDate}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm">Status</p>
+                  <span className={`inline-block px-2 py-1 rounded text-sm ${
+                    selectedInvoice.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                    selectedInvoice.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {selectedInvoice.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-gray-900 mb-2">Items</h3>
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left py-2 px-3 text-gray-600 text-sm">Product</th>
+                      <th className="text-center py-2 px-3 text-gray-600 text-sm">Qty</th>
+                      <th className="text-center py-2 px-3 text-gray-600 text-sm">Unit</th>
+                      <th className="text-right py-2 px-3 text-gray-600 text-sm">Price</th>
+                      <th className="text-right py-2 px-3 text-gray-600 text-sm">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t">
+                      <td className="py-2 px-3 text-gray-900">Product Sample</td>
+                      <td className="py-2 px-3 text-center text-gray-700">100</td>
+                      <td className="py-2 px-3 text-center text-gray-700">PCS</td>
+                      <td className="py-2 px-3 text-right text-gray-700">Rp 250,000</td>
+                      <td className="py-2 px-3 text-right text-gray-900">Rp {(selectedInvoice.amount / 1000000).toFixed(1)}M</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-gray-900">Rp {(selectedInvoice.amount / 1.11 / 1000000).toFixed(1)}M</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">PPN (11%):</span>
+                <span className="text-gray-900">Rp {(selectedInvoice.amount * 0.11 / 1.11 / 1000000).toFixed(1)}M</span>
+              </div>
+              <div className="flex justify-between border-t pt-2">
+                <span className="text-gray-900">Total:</span>
+                <span className="text-gray-900">Rp {(selectedInvoice.amount / 1000000).toFixed(1)}M</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t">
+              <button
+                onClick={() => setShowViewInvoice(false)}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
                 Close
