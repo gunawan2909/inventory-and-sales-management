@@ -19,10 +19,20 @@ const customerCredits = [
   { id: 3, customer: 'CV Sejahtera', creditLimit: 15000000, outstanding: 4200000, available: 10800000, utilization: 28 }
 ];
 
+const salesInvoices = [
+  { id: 1, invoiceNo: 'INV-JKT-20251207-001', soNumber: 'SO-JKT-20251207-001', customer: 'Toko Jaya', invoiceDate: '2025-12-07', dueDate: '2026-01-06', amount: 5500000, paid: 0, balance: 5500000, status: 'UNPAID' },
+  { id: 2, invoiceNo: 'INV-JKT-20251207-002', soNumber: 'SO-JKT-20251207-002', customer: 'UD Maju', invoiceDate: '2025-12-07', dueDate: '2026-01-06', amount: 8200000, paid: 0, balance: 8200000, status: 'UNPAID' },
+  { id: 3, invoiceNo: 'INV-JKT-20251206-045', soNumber: 'SO-JKT-20251206-045', customer: 'CV Sejahtera', invoiceDate: '2025-12-06', dueDate: '2026-01-05', amount: 3400000, paid: 3400000, balance: 0, status: 'PAID' },
+  { id: 4, invoiceNo: 'INV-JKT-20251205-038', soNumber: 'SO-JKT-20251205-038', customer: 'Toko Jaya', invoiceDate: '2025-12-05', dueDate: '2026-01-04', amount: 6200000, paid: 3000000, balance: 3200000, status: 'PARTIAL' },
+  { id: 5, invoiceNo: 'INV-JKT-20251204-032', soNumber: 'SO-JKT-20251204-032', customer: 'UD Makmur', invoiceDate: '2025-12-04', dueDate: '2025-12-19', amount: 4500000, paid: 0, balance: 4500000, status: 'OVERDUE' }
+];
+
 export default function SalesModule() {
   const [activeTab, setActiveTab] = useState<'orders' | 'refund' | 'invoice' | 'credit'>('orders');
   const [showCreateSO, setShowCreateSO] = useState(false);
   const [showCreateRefund, setShowCreateRefund] = useState(false);
+  const [selectedSO, setSelectedSO] = useState<typeof salesOrders[0] | null>(null);
+  const [showSODetail, setShowSODetail] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
@@ -168,7 +178,15 @@ export default function SalesModule() {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <button className="text-orange-600 hover:text-orange-700">View</button>
+                        <button
+                          onClick={() => {
+                            setSelectedSO(order);
+                            setShowSODetail(true);
+                          }}
+                          className="text-orange-600 hover:text-orange-700"
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -233,13 +251,56 @@ export default function SalesModule() {
 
           {/* Invoice Tab */}
           {activeTab === 'invoice' && (
-            <div className="text-center py-12">
-              <Receipt className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-gray-700 mb-2">Invoice Management</h3>
-              <p className="text-gray-500 mb-4">Generate, print, and manage sales invoices</p>
-              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
-                Generate Invoice
-              </button>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 text-gray-600">Invoice No</th>
+                    <th className="text-left py-3 px-4 text-gray-600">SO Number</th>
+                    <th className="text-left py-3 px-4 text-gray-600">Customer</th>
+                    <th className="text-left py-3 px-4 text-gray-600">Invoice Date</th>
+                    <th className="text-left py-3 px-4 text-gray-600">Due Date</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Amount</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Paid</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Balance</th>
+                    <th className="text-center py-3 px-4 text-gray-600">Status</th>
+                    <th className="text-center py-3 px-4 text-gray-600">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {salesInvoices.map((invoice) => (
+                    <tr key={invoice.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-900">{invoice.invoiceNo}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.soNumber}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.customer}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.invoiceDate}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.dueDate}</td>
+                      <td className="py-3 px-4 text-right text-gray-900">
+                        Rp {(invoice.amount / 1000000).toFixed(1)}M
+                      </td>
+                      <td className="py-3 px-4 text-right text-gray-700">
+                        Rp {invoice.paid > 0 ? (invoice.paid / 1000000).toFixed(1) + 'M' : '0'}
+                      </td>
+                      <td className="py-3 px-4 text-right text-gray-900">
+                        Rp {invoice.balance > 0 ? (invoice.balance / 1000000).toFixed(1) + 'M' : '0'}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <span className={`px-2 py-1 rounded text-sm ${
+                          invoice.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                          invoice.status === 'UNPAID' ? 'bg-yellow-100 text-yellow-700' :
+                          invoice.status === 'PARTIAL' ? 'bg-blue-100 text-blue-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                          {invoice.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button className="text-orange-600 hover:text-orange-700">View</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
@@ -489,6 +550,86 @@ export default function SalesModule() {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* Sales Order Detail Modal */}
+      <Modal
+        isOpen={showSODetail}
+        onClose={() => setShowSODetail(false)}
+        title="Sales Order Detail"
+        size="lg"
+      >
+        {selectedSO && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 pb-4 border-b">
+              <div>
+                <label className="block text-gray-600 text-sm mb-1">SO Number</label>
+                <p className="text-gray-900 font-medium">{selectedSO.soNumber}</p>
+              </div>
+              <div>
+                <label className="block text-gray-600 text-sm mb-1">Date</label>
+                <p className="text-gray-900">{selectedSO.date}</p>
+              </div>
+              <div>
+                <label className="block text-gray-600 text-sm mb-1">Customer</label>
+                <p className="text-gray-900">{selectedSO.customer}</p>
+              </div>
+              <div>
+                <label className="block text-gray-600 text-sm mb-1">Status</label>
+                <span className={`inline-block px-2 py-1 rounded text-sm ${
+                  selectedSO.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                  selectedSO.status === 'DELIVERED' ? 'bg-blue-100 text-blue-700' :
+                  'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {selectedSO.status}
+                </span>
+              </div>
+            </div>
+
+            <div className="pb-4 border-b">
+              <label className="block text-gray-600 text-sm mb-2">Credit Status</label>
+              <div className="flex items-center gap-2">
+                {selectedSO.creditStatus === 'OK' ? (
+                  <>
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <span className="text-green-700 font-medium">Credit OK</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                    <span className="text-red-700 font-medium">Over Credit Limit</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Total Amount:</span>
+                <span className="text-gray-900 font-semibold">Rp {(selectedSO.amount / 1000000).toFixed(1)}M</span>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-gray-900 font-medium mb-3">Order Items</h3>
+              <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-500 text-sm">
+                Item details would be displayed here
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4 border-t">
+              <button
+                onClick={() => setShowSODetail(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
+                Print SO
+              </button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
