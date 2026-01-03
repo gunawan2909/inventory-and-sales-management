@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Package, Barcode, TrendingDown, ArrowRightLeft, AlertCircle, CheckCircle } from 'lucide-react';
+import { Package, Barcode, TrendingDown, ArrowRightLeft, AlertCircle, CheckCircle, Plus } from 'lucide-react';
 import Modal from '../Modal';
 
 const stockData = [
@@ -21,9 +21,24 @@ const movementData = [
   { id: 3, timestamp: '2025-12-07 11:20:18', type: 'OUT', reference: 'SO-2025-046', product: 'Product Gamma', qty: -15, balance: 0, user: 'Sales' }
 ];
 
+// Sample PO and SO data for selection
+const purchaseOrders = [
+  { id: 1, poNumber: 'PO-2025-001', vendor: 'PT Supplier Jaya', date: '2025-12-01', status: 'APPROVED' },
+  { id: 2, poNumber: 'PO-2025-002', vendor: 'CV Maju Terus', date: '2025-12-03', status: 'PARTIALLY RECEIVED' },
+  { id: 3, poNumber: 'PO-2025-003', vendor: 'UD Sejahtera', date: '2025-12-05', status: 'PENDING' }
+];
+
+const salesOrders = [
+  { id: 1, soNumber: 'SO-JKT-20251207-001', customer: 'Toko Jaya', date: '2025-12-07', status: 'APPROVED' },
+  { id: 2, soNumber: 'SO-JKT-20251207-002', customer: 'UD Maju', date: '2025-12-07', status: 'APPROVED' },
+  { id: 3, soNumber: 'SO-JKT-20251206-045', customer: 'CV Sejahtera', date: '2025-12-06', status: 'DELIVERED' }
+];
+
 export default function InventoryModule() {
   const [activeTab, setActiveTab] = useState<'stock' | 'transfer' | 'movement' | 'barcode'>('stock');
   const [showCreateTransfer, setShowCreateTransfer] = useState(false);
+  const [showAddMovement, setShowAddMovement] = useState(false);
+  const [movementType, setMovementType] = useState<'IN' | 'OUT'>('IN');
 
   return (
     <div className="p-6 space-y-6">
@@ -218,8 +233,18 @@ export default function InventoryModule() {
 
           {/* Movement Tab */}
           {activeTab === 'movement' && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowAddMovement(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  <Plus className="w-4 h-4" />
+                  Input Data Movement
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-4 text-gray-600">Timestamp</th>
@@ -255,6 +280,7 @@ export default function InventoryModule() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 
@@ -455,6 +481,154 @@ export default function InventoryModule() {
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
               Create Transfer
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Add Movement Modal */}
+      <Modal
+        isOpen={showAddMovement}
+        onClose={() => setShowAddMovement(false)}
+        title="Input Stock Movement"
+        size="lg"
+      >
+        <div className="space-y-4">
+          {/* Movement Type */}
+          <div>
+            <label className="block text-gray-700 mb-2">Movement Type *</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setMovementType('IN')}
+                className={`flex-1 px-4 py-2 rounded-lg border ${
+                  movementType === 'IN'
+                    ? 'bg-green-50 border-green-600 text-green-700'
+                    : 'border-gray-300 text-gray-700'
+                }`}
+              >
+                IN (Barang Masuk)
+              </button>
+              <button
+                onClick={() => setMovementType('OUT')}
+                className={`flex-1 px-4 py-2 rounded-lg border ${
+                  movementType === 'OUT'
+                    ? 'bg-red-50 border-red-600 text-red-700'
+                    : 'border-gray-300 text-gray-700'
+                }`}
+              >
+                OUT (Barang Keluar)
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Reference Selection */}
+            <div>
+              <label className="block text-gray-700 mb-2">
+                {movementType === 'IN' ? 'Purchase Order *' : 'Sales Order *'}
+              </label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">-- Select {movementType === 'IN' ? 'Purchase Order' : 'Sales Order'} --</option>
+                {movementType === 'IN' ? (
+                  purchaseOrders.map((po) => (
+                    <option key={po.id} value={po.poNumber}>
+                      {po.poNumber} - {po.vendor} ({po.status})
+                    </option>
+                  ))
+                ) : (
+                  salesOrders.map((so) => (
+                    <option key={so.id} value={so.soNumber}>
+                      {so.soNumber} - {so.customer} ({so.status})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-gray-700 mb-2">Movement Date *</label>
+              <input
+                type="date"
+                defaultValue="2025-12-08"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          {/* Product Selection */}
+          <div>
+            <label className="block text-gray-700 mb-2">Product *</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option value="">-- Select Product --</option>
+              {stockData.map((item) => (
+                <option key={item.id} value={item.sku}>
+                  {item.sku} - {item.name} (Stock: {item.stock})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            {/* Quantity */}
+            <div>
+              <label className="block text-gray-700 mb-2">Quantity *</label>
+              <input
+                type="number"
+                placeholder="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                min="0"
+                step="1"
+              />
+            </div>
+
+            {/* Unit */}
+            <div>
+              <label className="block text-gray-700 mb-2">Unit</label>
+              <input
+                type="text"
+                placeholder="PCS"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-gray-700 mb-2">Location</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Surabaya</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-gray-700 mb-2">Notes</label>
+            <textarea
+              rows={3}
+              placeholder="Additional notes or remarks..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <button
+              onClick={() => setShowAddMovement(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                alert('Stock Movement recorded successfully!');
+                setShowAddMovement(false);
+              }}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Save Movement
             </button>
           </div>
         </div>

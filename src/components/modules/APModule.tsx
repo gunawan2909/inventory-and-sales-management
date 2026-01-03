@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CreditCard, DollarSign, TrendingUp, FileText } from 'lucide-react';
+import { CreditCard, DollarSign, TrendingUp, FileText, Plus } from 'lucide-react';
+import Modal from '../Modal';
 
 const apData = [
   { id: 1, vendor: 'PT Supplier Jaya', total: 12500000, current: 5000000, d30: 4000000, d60: 2500000, d90: 1000000 },
@@ -17,8 +18,16 @@ const margins = [
   { id: 3, product: 'Product Gamma', cost: 75000, price: 95000, margin: 21.1, volume: 120, contribution: 2400000 }
 ];
 
+// Vendor invoices for payment
+const vendorInvoices = [
+  { id: 1, invoiceNo: 'INV-V001-123', vendor: 'PT Supplier Jaya', amount: 5000000, dueDate: '2026-01-04', status: 'UNPAID' },
+  { id: 2, invoiceNo: 'INV-V002-456', vendor: 'CV Maju Terus', amount: 3000000, dueDate: '2026-01-22', status: 'UNPAID' },
+  { id: 3, invoiceNo: 'INV-V003-789', vendor: 'UD Sejahtera', amount: 2500000, dueDate: '2026-01-09', status: 'UNPAID' }
+];
+
 export default function APModule() {
   const [activeTab, setActiveTab] = useState<'aging' | 'payment' | 'margin' | 'profit'>('aging');
+  const [showAddPayment, setShowAddPayment] = useState(false);
 
   return (
     <div className="p-6 space-y-6">
@@ -120,8 +129,18 @@ export default function APModule() {
           )}
 
           {activeTab === 'payment' && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowAddPayment(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Payment
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-4 text-gray-600">Payment No</th>
@@ -155,6 +174,7 @@ export default function APModule() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 
@@ -204,6 +224,128 @@ export default function APModule() {
           )}
         </div>
       </div>
+
+      {/* Add Payment Modal */}
+      <Modal
+        isOpen={showAddPayment}
+        onClose={() => setShowAddPayment(false)}
+        title="Add Vendor Payment"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Payment Number */}
+            <div>
+              <label className="block text-gray-700 mb-2">Payment Number</label>
+              <input
+                type="text"
+                defaultValue="PAY-003"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                disabled
+              />
+            </div>
+
+            {/* Payment Date */}
+            <div>
+              <label className="block text-gray-700 mb-2">Payment Date *</label>
+              <input
+                type="date"
+                defaultValue="2025-12-08"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+
+          {/* Vendor Invoice Selection */}
+          <div>
+            <label className="block text-gray-700 mb-2">Vendor Invoice *</label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+              <option value="">-- Select Invoice --</option>
+              {vendorInvoices.map((invoice) => (
+                <option key={invoice.id} value={invoice.invoiceNo}>
+                  {invoice.invoiceNo} - {invoice.vendor} - Rp {(invoice.amount / 1000000).toFixed(1)}M (Due: {invoice.dueDate})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Payment Amount */}
+            <div>
+              <label className="block text-gray-700 mb-2">Payment Amount *</label>
+              <input
+                type="number"
+                placeholder="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                min="0"
+                step="1000"
+              />
+            </div>
+
+            {/* Payment Method */}
+            <div>
+              <label className="block text-gray-700 mb-2">Payment Method *</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="">-- Select Method --</option>
+                <option>Transfer</option>
+                <option>Check</option>
+                <option>Cash</option>
+                <option>Giro</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Bank/Reference */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Bank</label>
+              <input
+                type="text"
+                placeholder="e.g., BCA, Mandiri, BNI"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-2">Reference Number</label>
+              <input
+                type="text"
+                placeholder="e.g., Transfer/Check number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-gray-700 mb-2">Notes</label>
+            <textarea
+              rows={3}
+              placeholder="Payment notes or remarks..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <button
+              onClick={() => setShowAddPayment(false)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                alert('Payment added successfully!');
+                setShowAddPayment(false);
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Save Payment
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

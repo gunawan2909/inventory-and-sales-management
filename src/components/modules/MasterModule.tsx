@@ -1329,9 +1329,6 @@ export default function MasterModule() {
                         <div className="flex justify-between items-center pt-3 border-t border-gray-200">
                           <div className="flex gap-4 text-sm">
                             <span className="text-gray-600">
-                              <span className="font-medium text-gray-900">{priceList.products}</span> products
-                            </span>
-                            <span className="text-gray-600">
                               <span className="font-medium text-green-700">+{priceList.markup}%</span> markup
                             </span>
                           </div>

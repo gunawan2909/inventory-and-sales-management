@@ -18,8 +18,16 @@ const paymentUploads = [
   { id: 2, customer: 'UD Maju', invoiceNo: 'INV-002', amount: 2500000, uploadDate: '2025-12-07', status: 'PENDING' }
 ];
 
+const salesInvoices = [
+  { id: 1, invoiceNo: 'INV-JKT-20251207-001', soNumber: 'SO-JKT-20251207-001', customer: 'Toko Jaya', invoiceDate: '2025-12-07', dueDate: '2026-01-06', amount: 5500000, paid: 0, balance: 5500000, status: 'UNPAID' },
+  { id: 2, invoiceNo: 'INV-JKT-20251207-002', soNumber: 'SO-JKT-20251207-002', customer: 'UD Maju', invoiceDate: '2025-12-07', dueDate: '2026-01-06', amount: 8200000, paid: 0, balance: 8200000, status: 'UNPAID' },
+  { id: 3, invoiceNo: 'INV-JKT-20251206-045', soNumber: 'SO-JKT-20251206-045', customer: 'CV Sejahtera', invoiceDate: '2025-12-06', dueDate: '2026-01-05', amount: 3400000, paid: 3400000, balance: 0, status: 'PAID' },
+  { id: 4, invoiceNo: 'INV-JKT-20251205-038', soNumber: 'SO-JKT-20251205-038', customer: 'Toko Jaya', invoiceDate: '2025-12-05', dueDate: '2026-01-04', amount: 6200000, paid: 3000000, balance: 3200000, status: 'PARTIAL' },
+  { id: 5, invoiceNo: 'INV-JKT-20251204-032', soNumber: 'SO-JKT-20251204-032', customer: 'UD Makmur', invoiceDate: '2025-12-04', dueDate: '2025-12-19', amount: 4500000, paid: 0, balance: 4500000, status: 'OVERDUE' }
+];
+
 export default function ARModule() {
-  const [activeTab, setActiveTab] = useState<'aging' | 'collection' | 'upload'>('aging');
+  const [activeTab, setActiveTab] = useState<'aging' | 'invoice' | 'upload'>('aging');
 
   return (
     <div className="p-6 space-y-6">
@@ -87,10 +95,10 @@ export default function ARModule() {
               Aging Piutang
             </button>
             <button
-              onClick={() => setActiveTab('collection')}
-              className={`px-4 py-2 rounded-lg transition-colors ${activeTab === 'collection' ? 'bg-pink-50 text-pink-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setActiveTab('invoice')}
+              className={`px-4 py-2 rounded-lg transition-colors ${activeTab === 'invoice' ? 'bg-pink-50 text-pink-600' : 'text-gray-600 hover:bg-gray-50'}`}
             >
-              Collection Schedule
+              Daftar Invoice
             </button>
             <button
               onClick={() => setActiveTab('upload')}
@@ -137,43 +145,42 @@ export default function ARModule() {
             </div>
           )}
 
-          {activeTab === 'collection' && (
+          {activeTab === 'invoice' && (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 text-gray-600">Invoice No</th>
+                    <th className="text-left py-3 px-4 text-gray-600">SO Number</th>
                     <th className="text-left py-3 px-4 text-gray-600">Customer</th>
-                    <th className="text-right py-3 px-4 text-gray-600">Amount</th>
+                    <th className="text-left py-3 px-4 text-gray-600">Invoice Date</th>
                     <th className="text-left py-3 px-4 text-gray-600">Due Date</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Priority</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Amount</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Paid</th>
+                    <th className="text-right py-3 px-4 text-gray-600">Balance</th>
                     <th className="text-center py-3 px-4 text-gray-600">Status</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {collectionTasks.map((task) => (
-                    <tr key={task.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-900">{task.customer}</td>
-                      <td className="py-3 px-4 text-right text-gray-900">Rp {(task.amount / 1000).toFixed(0)}K</td>
-                      <td className="py-3 px-4 text-gray-700">{task.dueDate}</td>
+                  {salesInvoices.map((invoice) => (
+                    <tr key={invoice.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-900">{invoice.invoiceNo}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.soNumber}</td>
+                      <td className="py-3 px-4 text-gray-900">{invoice.customer}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.invoiceDate}</td>
+                      <td className="py-3 px-4 text-gray-700">{invoice.dueDate}</td>
+                      <td className="py-3 px-4 text-right text-gray-900">Rp {(invoice.amount / 1000).toFixed(0)}K</td>
+                      <td className="py-3 px-4 text-right text-gray-700">Rp {(invoice.paid / 1000).toFixed(0)}K</td>
+                      <td className="py-3 px-4 text-right text-gray-900">Rp {(invoice.balance / 1000).toFixed(0)}K</td>
                       <td className="py-3 px-4 text-center">
                         <span className={`px-2 py-1 rounded text-sm ${
-                          task.priority === 'High' ? 'bg-red-100 text-red-700' :
-                          task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-green-100 text-green-700'
+                          invoice.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                          invoice.status === 'UNPAID' ? 'bg-yellow-100 text-yellow-700' :
+                          invoice.status === 'PARTIAL' ? 'bg-blue-100 text-blue-700' :
+                          'bg-red-100 text-red-700'
                         }`}>
-                          {task.priority}
+                          {invoice.status}
                         </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`px-2 py-1 rounded text-sm ${
-                          task.status === 'OVERDUE' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {task.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <button className="text-pink-600 hover:text-pink-700">Follow Up</button>
                       </td>
                     </tr>
                   ))}
