@@ -138,15 +138,11 @@ export default function OpnameCountingTab() {
                 <th className="text-center py-3 px-4 text-gray-600 text-sm font-medium">UOM</th>
                 <th className="text-center py-3 px-4 text-gray-600 text-sm font-medium">Qty System</th>
                 <th className="text-center py-3 px-4 text-gray-600 text-sm font-medium">Qty Counted</th>
-                <th className="text-center py-3 px-4 text-gray-600 text-sm font-medium">Variance</th>
               </tr>
             </thead>
             <tbody>
               {countItems.map((item) => {
                 const displayQty = isEditing ? editedItems[item.id] : item.counted_qty?.toString();
-                const variance = item.counted_qty !== null && item.system_qty !== null
-                  ? item.counted_qty - item.system_qty
-                  : null;
 
                 return (
                   <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
@@ -174,18 +170,6 @@ export default function OpnameCountingTab() {
                         ) : (
                           <span className="text-gray-400">-</span>
                         )
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      {variance !== null ? (
-                        <span className={`font-medium ${
-                          variance === 0 ? 'text-green-600' :
-                          variance > 0 ? 'text-blue-600' : 'text-red-600'
-                        }`}>
-                          {variance > 0 ? '+' : ''}{variance}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400">-</span>
                       )}
                     </td>
                   </tr>
