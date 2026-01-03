@@ -116,7 +116,6 @@ export default function OpnameCountingTab() {
 
   const handleStartSheet = (sheet: CountSheet) => {
     if (confirm(`Start counting for ${sheet.sheet_no}?`)) {
-      alert('Count sheet started! GPS location recorded.');
       setSelectedSheet(sheet);
     }
   };
