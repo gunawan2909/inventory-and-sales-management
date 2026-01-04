@@ -826,14 +826,14 @@ export default function MasterModule() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-gray-900 mb-1">Modul Master Data</h1>
-        <p className="text-gray-600">Produk, Cabang, Vendor, Customer, Harga & Margin</p>
+        <h1 className="text-lg md:text-xl lg:text-2xl text-gray-900 mb-1 font-medium">Modul Master Data</h1>
+        <p className="text-sm md:text-base text-gray-600">Produk, Cabang, Vendor, Customer, Harga & Margin</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Package className="w-5 h-5 text-amber-600" />
@@ -844,7 +844,7 @@ export default function MasterModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <Building2 className="w-5 h-5 text-blue-600" />
@@ -855,7 +855,7 @@ export default function MasterModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-purple-600" />
@@ -866,7 +866,7 @@ export default function MasterModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <Store className="w-5 h-5 text-green-600" />
@@ -877,7 +877,7 @@ export default function MasterModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-orange-600" />
@@ -1328,7 +1328,7 @@ export default function MasterModule() {
                         <p className="text-gray-600 text-sm mb-3">{priceList.description}</p>
                         <div className="flex justify-between items-center pt-3 border-t border-gray-200">
                           <div className="flex gap-4 text-sm">
-                            <span className="text-gray-600">
+                            <span className="text-sm md:text-base text-gray-600">
                               <span className="font-medium text-green-700">+{priceList.markup}%</span> markup
                             </span>
                           </div>
