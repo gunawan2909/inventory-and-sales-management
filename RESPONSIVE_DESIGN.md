@@ -4,16 +4,18 @@
 
 Aplikasi MERCY ERP telah dioptimasi untuk 3 breakpoint utama menggunakan Tailwind CSS:
 
-- **Mobile**: < 768px (Smartphone)
-- **Tablet**: 768px - 1024px (Tablet)
-- **Desktop**: ≥ 1024px (Komputer/Laptop)
+- **Mobile**: < 640px (Smartphone - hamburger menu)
+- **Tablet**: 640px - 1024px (Tablet - sidebar visible)
+- **Desktop**: ≥ 1024px (Komputer/Laptop - full features)
+
+> **⚠️ Important:** Mobile detection menggunakan **640px** (bukan 768px) untuk menghindari bug dimana hamburger menu muncul di desktop Windows dengan window yang tidak full-screen.
 
 ## Breakpoints Tailwind CSS
 
 ```
-sm:  640px  - Minimal usage
-md:  768px  - Tablet (Primary breakpoint)
-lg:  1024px - Desktop
+sm:  640px  - Mobile/Tablet boundary (Mobile menu threshold)
+md:  768px  - Tablet/Desktop content breakpoint
+lg:  1024px - Desktop layout breakpoint
 xl:  1280px - Large Desktop
 2xl: 1536px - Extra Large Desktop
 ```
@@ -22,27 +24,46 @@ xl:  1280px - Large Desktop
 
 ### 1. App Layout (`src/App.tsx`)
 
-#### Mobile (< 768px)
+#### Mobile (< 640px)
 - **Sidebar**: Hidden by default, slide-in overlay saat menu dibuka
 - **Header Bar**: Fixed top bar dengan logo & hamburger menu
 - **Main Content**: Full width dengan padding top untuk header
 
-#### Tablet & Desktop (≥ 768px)
-- **Sidebar**: Visible dengan opsi collapse/expand
-- **No Header Bar**: Sidebar selalu visible
+#### Tablet & Desktop (≥ 640px)
+- **Sidebar**: Visible dengan opsi collapse/expand (width toggle: 256px ↔ 80px)
+- **No Header Bar**: Sidebar selalu visible, tidak perlu hamburger menu
 - **Main Content**: Flex dengan sidebar
 
 **Fitur Responsive:**
 ```tsx
-// Mobile menu detection
+// Mobile menu detection - using 640px threshold
 const [isMobile, setIsMobile] = useState(false);
 const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-// Auto-detect screen size
+// Auto-detect screen size (640px = sm breakpoint)
 useEffect(() => {
-  const checkMobile = () => setIsMobile(window.innerWidth < 768);
+  const checkMobile = () => {
+    // Use 640px instead of 768px to avoid triggering mobile mode
+    // on small desktop windows
+    setIsMobile(window.innerWidth < 640);
+  };
+
+  checkMobile();
   window.addEventListener('resize', checkMobile);
+  return () => window.removeEventListener('resize', checkMobile);
 }, []);
+```
+
+**CSS Classes:**
+```tsx
+// Mobile header - hidden on screens >= 640px
+<div className="sm:hidden ...">
+
+// Desktop sidebar logo - visible on screens >= 640px
+<div className="hidden sm:block ...">
+
+// Mobile overlay backdrop
+<div className="sm:hidden ..." />
 ```
 
 ### 2. Dashboard (`src/components/Dashboard.tsx`)

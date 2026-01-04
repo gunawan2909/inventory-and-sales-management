@@ -38,10 +38,11 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile screen size
+  // Detect mobile screen size - using 640px (sm breakpoint) for better desktop support
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      // Use 640px instead of 768px to avoid triggering mobile mode on small desktop windows
+      setIsMobile(window.innerWidth < 640);
     };
 
     checkMobile();
@@ -99,8 +100,8 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Mobile Menu Button - Only visible on mobile */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+      {/* Mobile Menu Button - Only visible on mobile (< 640px) */}
+      <div className="sm:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/assets/logo.svg" alt="MERCY Logo" className="w-8 h-8" />
           <div>
@@ -119,7 +120,7 @@ export default function App() {
       {/* Mobile Sidebar Overlay */}
       {isMobile && mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 sm:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -133,8 +134,8 @@ export default function App() {
         }
       `}>
         <div className="h-full flex flex-col">
-          {/* Logo - Desktop only */}
-          <div className="p-4 border-b border-gray-200 hidden md:block">
+          {/* Logo - Desktop only (>= 640px) */}
+          <div className="p-4 border-b border-gray-200 hidden sm:block">
             <div className="flex items-center gap-3">
               <img src="/assets/logo.svg" alt="MERCY Logo" className="w-10 h-10" />
               {sidebarOpen && (
@@ -172,8 +173,8 @@ export default function App() {
             })}
           </nav>
 
-          {/* Toggle Button - Desktop only */}
-          <div className="p-3 border-t border-gray-200 hidden md:block">
+          {/* Toggle Button - Desktop only (>= 640px) */}
+          <div className="p-3 border-t border-gray-200 hidden sm:block">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="w-full px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
