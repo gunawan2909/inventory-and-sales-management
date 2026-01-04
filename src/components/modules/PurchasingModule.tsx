@@ -39,18 +39,18 @@ export default function PurchasingModule() {
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-gray-900 mb-1">Modul Pembelian (Purchasing)</h1>
-          <p className="text-gray-600">Vendor Management, Purchase Orders, Three-Way Matching</p>
+          <h1 className="text-lg md:text-xl lg:text-2xl text-gray-900 mb-1 font-medium">Modul Pembelian (Purchasing)</h1>
+          <p className="text-sm md:text-base text-gray-600">Vendor Management, Purchase Orders, Three-Way Matching</p>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-purple-600" />
@@ -61,7 +61,7 @@ export default function PurchasingModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <Package className="w-5 h-5 text-green-600" />
@@ -72,7 +72,7 @@ export default function PurchasingModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <Receipt className="w-5 h-5 text-blue-600" />
@@ -83,7 +83,7 @@ export default function PurchasingModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
               <AlertTriangle className="w-5 h-5 text-orange-600" />
@@ -475,11 +475,11 @@ export default function PurchasingModule() {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between mb-2">
-              <span className="text-gray-600">Subtotal:</span>
+              <span className="text-sm md:text-base text-gray-600">Subtotal:</span>
               <span className="text-gray-900">Rp 0</span>
             </div>
             <div className="flex justify-between mb-2">
-              <span className="text-gray-600">PPN (11%):</span>
+              <span className="text-sm md:text-base text-gray-600">PPN (11%):</span>
               <span className="text-gray-900">Rp 0</span>
             </div>
             <div className="flex justify-between border-t pt-2">
@@ -621,11 +621,11 @@ export default function PurchasingModule() {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between mb-2">
-              <span className="text-gray-600">Subtotal:</span>
+              <span className="text-sm md:text-base text-gray-600">Subtotal:</span>
               <span className="text-gray-900">Rp 0</span>
             </div>
             <div className="flex justify-between mb-2">
-              <span className="text-gray-600">PPN (11%):</span>
+              <span className="text-sm md:text-base text-gray-600">PPN (11%):</span>
               <span className="text-gray-900">Rp 0</span>
             </div>
             <div className="flex justify-between border-t pt-2">
@@ -727,11 +727,11 @@ export default function PurchasingModule() {
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-sm md:text-base text-gray-600">Subtotal:</span>
                 <span className="text-gray-900">Rp {(selectedPO.amount / 1.11 / 1000000).toFixed(1)}M</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">PPN (11%):</span>
+                <span className="text-sm md:text-base text-gray-600">PPN (11%):</span>
                 <span className="text-gray-900">Rp {(selectedPO.amount * 0.11 / 1.11 / 1000000).toFixed(1)}M</span>
               </div>
               <div className="flex justify-between border-t pt-2">
@@ -827,11 +827,11 @@ export default function PurchasingModule() {
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Subtotal:</span>
+                <span className="text-sm md:text-base text-gray-600">Subtotal:</span>
                 <span className="text-gray-900">Rp {(selectedInvoice.amount / 1.11 / 1000000).toFixed(1)}M</span>
               </div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">PPN (11%):</span>
+                <span className="text-sm md:text-base text-gray-600">PPN (11%):</span>
                 <span className="text-gray-900">Rp {(selectedInvoice.amount * 0.11 / 1.11 / 1000000).toFixed(1)}M</span>
               </div>
               <div className="flex justify-between border-t pt-2">
@@ -899,17 +899,17 @@ export default function PurchasingModule() {
               <h3 className="text-gray-900 font-semibold mb-3">Credit Information</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Credit Limit:</span>
+                  <span className="text-sm md:text-base text-gray-600">Credit Limit:</span>
                   <span className="text-gray-900 font-medium">Rp {(selectedVendor.creditLimit / 1000000).toFixed(1)}M</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Outstanding:</span>
+                  <span className="text-sm md:text-base text-gray-600">Outstanding:</span>
                   <span className={selectedVendor.outstanding > selectedVendor.creditLimit * 0.8 ? 'text-red-600 font-medium' : 'text-gray-900'}>
                     Rp {(selectedVendor.outstanding / 1000000).toFixed(1)}M
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Available:</span>
+                  <span className="text-sm md:text-base text-gray-600">Available:</span>
                   <span className="text-green-600 font-medium">
                     Rp {((selectedVendor.creditLimit - selectedVendor.outstanding) / 1000000).toFixed(1)}M
                   </span>

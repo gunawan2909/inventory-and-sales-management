@@ -191,3 +191,87 @@
 html {
   font-size: var(--font-size);
 }
+
+/* ===================================
+   RESPONSIVE UTILITIES
+   =================================== */
+
+/* Responsive Breakpoints:
+   Mobile: < 768px
+   Tablet: 768px - 1024px
+   Desktop: >= 1024px
+*/
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Responsive table wrapper */
+  .table-responsive {
+    @apply overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0;
+  }
+
+  .table-responsive table {
+    @apply min-w-full;
+  }
+
+  /* Mobile-friendly table cells */
+  @media (max-width: 767px) {
+    .table-responsive th,
+    .table-responsive td {
+      @apply px-2 py-2 text-xs whitespace-nowrap;
+    }
+
+    .table-responsive th:first-child,
+    .table-responsive td:first-child {
+      @apply sticky left-0 bg-white z-10;
+    }
+  }
+
+  /* Container with responsive padding */
+  .container-responsive {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+
+  /* Responsive grid auto-fit */
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 767px) {
+    .grid-responsive {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Text size responsive */
+  .text-responsive-sm {
+    @apply text-xs md:text-sm;
+  }
+
+  .text-responsive-base {
+    @apply text-sm md:text-base;
+  }
+
+  .text-responsive-lg {
+    @apply text-base md:text-lg;
+  }
+
+  .text-responsive-xl {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  /* Stack on mobile */
+  .stack-mobile {
+    @apply flex flex-col md:flex-row;
+  }
+}

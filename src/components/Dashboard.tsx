@@ -130,21 +130,21 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-gray-900 mb-1">Dashboard Overview</h1>
-        <p className="text-gray-600">Medimart Enterprise Resource System - Version 1.0</p>
+        <h1 className="text-lg md:text-xl lg:text-2xl text-gray-900 mb-1">Dashboard Overview</h1>
+        <p className="text-sm md:text-base text-gray-600">Medimart Enterprise Resource System - Version 1.0</p>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         {statsData.map((stat, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-            <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
-            <p className="text-gray-900 mb-2">{stat.value}</p>
-            <div className={`flex items-center gap-1 text-sm ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {stat.trend === 'up' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+          <div key={index} className="bg-white p-3 md:p-4 rounded-lg border border-gray-200 shadow-sm">
+            <p className="text-gray-600 text-xs md:text-sm mb-1 truncate">{stat.label}</p>
+            <p className="text-sm md:text-base lg:text-lg text-gray-900 mb-1 md:mb-2 font-medium">{stat.value}</p>
+            <div className={`flex items-center gap-1 text-xs md:text-sm ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+              {stat.trend === 'up' ? <ArrowUpRight className="w-3 h-3 md:w-4 md:h-4" /> : <ArrowDownRight className="w-3 h-3 md:w-4 md:h-4" />}
               <span>{stat.change}</span>
             </div>
           </div>
@@ -152,25 +152,25 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       {/* Alerts */}
-      <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
-          <AlertCircle className="w-5 h-5 text-orange-500" />
-          <h2 className="text-gray-900">Alerts & Notifications</h2>
+          <AlertCircle className="w-4 h-4 md:w-5 md:h-5 text-orange-500" />
+          <h2 className="text-sm md:text-base lg:text-lg text-gray-900 font-medium">Alerts & Notifications</h2>
         </div>
         <div className="space-y-2">
           {alerts.map((alert, index) => (
             <div
               key={index}
-              className={`flex items-center justify-between p-3 rounded-lg border ${
+              className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-2 md:p-3 rounded-lg border gap-2 ${
                 alert.type === 'warning' ? 'bg-orange-50 border-orange-200' :
                 alert.type === 'info' ? 'bg-blue-50 border-blue-200' :
                 'bg-green-50 border-green-200'
               }`}
             >
-              <span className="text-gray-700">{alert.message}</span>
+              <span className="text-xs md:text-sm text-gray-700">{alert.message}</span>
               <button
                 onClick={() => onNavigate(alert.module)}
-                className="text-blue-600 hover:text-blue-700 text-sm"
+                className="text-blue-600 hover:text-blue-700 text-xs md:text-sm whitespace-nowrap"
               >
                 View →
               </button>
@@ -181,8 +181,8 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Module Cards */}
       <div>
-        <h2 className="text-gray-900 mb-4">Modules</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <h2 className="text-base md:text-lg lg:text-xl text-gray-900 mb-3 md:mb-4 font-medium">Modules</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4">
           {moduleCards.map((module) => {
             const Icon = module.icon;
             const colorClasses = getColorClasses(module.color);
@@ -190,14 +190,14 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               <button
                 key={module.id}
                 onClick={() => onNavigate(module.id)}
-                className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-left group"
+                className="bg-white p-4 md:p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all text-left group"
               >
-                <div className={`w-12 h-12 ${colorClasses.bg} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                  <Icon className={`w-6 h-6 ${colorClasses.text}`} />
+                <div className={`w-10 h-10 md:w-12 md:h-12 ${colorClasses.bg} rounded-lg flex items-center justify-center mb-2 md:mb-3 group-hover:scale-110 transition-transform`}>
+                  <Icon className={`w-5 h-5 md:w-6 md:h-6 ${colorClasses.text}`} />
                 </div>
-                <h3 className="text-gray-900 mb-1">{module.name}</h3>
-                <p className={`text-${module.color}-600 text-sm mb-2`}>{module.stats}</p>
-                <p className="text-gray-500 text-sm">{module.description}</p>
+                <h3 className="text-sm md:text-base text-gray-900 mb-1 font-medium">{module.name}</h3>
+                <p className={`text-${module.color}-600 text-xs md:text-sm mb-1 md:mb-2`}>{module.stats}</p>
+                <p className="text-gray-500 text-xs md:text-sm line-clamp-2">{module.description}</p>
               </button>
             );
           })}
