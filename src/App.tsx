@@ -127,10 +127,10 @@ export default function App() {
 
       {/* Sidebar - Desktop: Always visible, Mobile: Overlay when open */}
       <aside className={`
-        bg-white border-r border-gray-200 transition-all duration-300 z-50
+        bg-white border-r border-gray-200 transition-all duration-300
         ${isMobile
-          ? `fixed inset-y-0 left-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
-          : `${sidebarOpen ? 'w-64' : 'w-20'}`
+          ? `fixed inset-y-0 left-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64 z-50`
+          : `relative flex-shrink-0 ${sidebarOpen ? 'w-64' : 'w-20'}`
         }
       `}>
         <div className="h-full flex flex-col">
