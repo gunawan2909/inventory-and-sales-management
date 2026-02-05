@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, Plus, FileText, Package, Receipt, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import Modal from '../Modal';
 
 const vendors = [
-  { id: 1, code: 'V001', name: 'PT Supplier Jaya', status: 'ACTIVE', isPkp: true, paymentTerm: 'NET 30', creditLimit: 50000000, outstanding: 12500000 },
+  { id: 1, code: 'V001', name: 'PT Supplier Jaya', status: 'ACTIVE', isPkp: true, paymentTerm: 'NET 30', creditLimit: 50000000, outstanding: 42500000 },
   { id: 2, code: 'V002', name: 'CV Maju Terus', status: 'ACTIVE', isPkp: false, paymentTerm: 'NET 45', creditLimit: 30000000, outstanding: 8200000 },
-  { id: 3, code: 'V003', name: 'UD Sejahtera', status: 'ACTIVE', isPkp: true, paymentTerm: 'COD', creditLimit: 20000000, outstanding: 0 }
+  { id: 3, code: 'V003', name: 'UD Sejahtera', status: 'INACTIVE', isPkp: true, paymentTerm: 'COD', creditLimit: 20000000, outstanding: 1500000 },
+  { id: 4, code: 'V004', name: 'PT Andalan Abadi', status: 'ACTIVE', isPkp: false, paymentTerm: 'NET 60', creditLimit: 15000000, outstanding: 16500000 }
 ];
 
 const purchaseOrders = [
@@ -29,6 +30,10 @@ const matchingData = [
 export default function PurchasingModule() {
   const [activeTab, setActiveTab] = useState<'vendors' | 'po' | 'invoice' | 'matching'>('vendors');
   const [searchTerm, setSearchTerm] = useState('');
+  const [vendorLoading, setVendorLoading] = useState(true);
+  const [vendorPage, setVendorPage] = useState(1);
+  const [vendorSortKey, setVendorSortKey] = useState<'name' | 'creditLimit' | 'outstanding'>('name');
+  const [vendorSortDirection, setVendorSortDirection] = useState<'asc' | 'desc'>('asc');
   const [showCreatePO, setShowCreatePO] = useState(false);
   const [showCreateInvoice, setShowCreateInvoice] = useState(false);
   const [showViewPO, setShowViewPO] = useState(false);
@@ -37,6 +42,57 @@ export default function PurchasingModule() {
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [showVendorDetails, setShowVendorDetails] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<any>(null);
+  const vendorPageSize = 10;
+
+  useEffect(() => {
+    setVendorLoading(true);
+    const timer = setTimeout(() => {
+      setVendorLoading(false);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    setVendorPage(1);
+  }, [searchTerm, vendorSortKey, vendorSortDirection]);
+
+  const formatCurrency = (amount: number) => `Rp ${(amount / 1000000).toFixed(1)}M`;
+
+  const filteredVendors = useMemo(() => {
+    if (!searchTerm) {
+      return vendors;
+    }
+    const keyword = searchTerm.toLowerCase();
+    return vendors.filter((vendor) =>
+      vendor.name.toLowerCase().includes(keyword) ||
+      vendor.code.toLowerCase().includes(keyword)
+    );
+  }, [searchTerm]);
+
+  const sortedVendors = useMemo(() => {
+    const sorted = [...filteredVendors];
+    sorted.sort((a, b) => {
+      if (vendorSortKey === 'name') {
+        return a.name.localeCompare(b.name);
+      }
+      return a[vendorSortKey] - b[vendorSortKey];
+    });
+    return vendorSortDirection === 'asc' ? sorted : sorted.reverse();
+  }, [filteredVendors, vendorSortDirection, vendorSortKey]);
+
+  const vendorTotalPages = Math.max(1, Math.ceil(sortedVendors.length / vendorPageSize));
+  const vendorStartIndex = (vendorPage - 1) * vendorPageSize;
+  const vendorPageItems = sortedVendors.slice(vendorStartIndex, vendorStartIndex + vendorPageSize);
+
+  const getOutstandingTone = (vendor: typeof vendors[number]) => {
+    if (vendor.outstanding > vendor.creditLimit) {
+      return 'text-red-700 bg-red-50';
+    }
+    if (vendor.outstanding > vendor.creditLimit * 0.8) {
+      return 'text-yellow-700 bg-yellow-50';
+    }
+    return 'text-gray-900';
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -134,12 +190,32 @@ export default function PurchasingModule() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder={`Search ${activeTab}...`}
+                placeholder={activeTab === 'vendors' ? 'Search vendor by name or code...' : `Search ${activeTab}...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
+            {activeTab === 'vendors' && (
+              <>
+                <select
+                  value={vendorSortKey}
+                  onChange={(e) => setVendorSortKey(e.target.value as typeof vendorSortKey)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                >
+                  <option value="name">Sort: Name</option>
+                  <option value="creditLimit">Sort: Credit Limit</option>
+                  <option value="outstanding">Sort: Outstanding</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setVendorSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+                >
+                  {vendorSortDirection === 'asc' ? 'ASC' : 'DESC'}
+                </button>
+              </>
+            )}
             {activeTab === 'po' && (
               <button
                 onClick={() => setShowCreatePO(true)}
@@ -162,61 +238,113 @@ export default function PurchasingModule() {
 
           {/* Vendors Tab */}
           {activeTab === 'vendors' && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-gray-600">Code</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Vendor Name</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Status</th>
-                    <th className="text-left py-3 px-4 text-gray-600">PKP</th>
-                    <th className="text-left py-3 px-4 text-gray-600">Payment Term</th>
-                    <th className="text-right py-3 px-4 text-gray-600">Credit Limit</th>
-                    <th className="text-right py-3 px-4 text-gray-600">Outstanding</th>
-                    <th className="text-center py-3 px-4 text-gray-600">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {vendors.map((vendor) => (
-                    <tr key={vendor.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-900">{vendor.code}</td>
-                      <td className="py-3 px-4 text-gray-900">{vendor.name}</td>
-                      <td className="py-3 px-4">
-                        <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
-                          {vendor.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        {vendor.isPkp ? (
-                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm">PKP</span>
-                        ) : (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">Non-PKP</span>
-                        )}
-                      </td>
-                      <td className="py-3 px-4 text-gray-700">{vendor.paymentTerm}</td>
-                      <td className="py-3 px-4 text-right text-gray-900">
-                        Rp {(vendor.creditLimit / 1000000).toFixed(1)}M
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <span className={vendor.outstanding > vendor.creditLimit * 0.8 ? 'text-red-600' : 'text-gray-900'}>
-                          Rp {(vendor.outstanding / 1000000).toFixed(1)}M
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <button
-                          onClick={() => {
-                            setSelectedVendor(vendor);
-                            setShowVendorDetails(true);
-                          }}
-                          className="text-purple-600 hover:text-purple-700 font-medium"
-                        >
-                          Select
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              {vendorLoading ? (
+                <div className="py-10 text-center text-gray-500">Loading vendor data...</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 text-gray-600">Code</th>
+                        <th className="text-left py-3 px-4 text-gray-600">Vendor Name</th>
+                        <th className="text-left py-3 px-4 text-gray-600">Status</th>
+                        <th className="text-left py-3 px-4 text-gray-600">PKP</th>
+                        <th className="text-left py-3 px-4 text-gray-600">Payment Term</th>
+                        <th className="text-right py-3 px-4 text-gray-600">Credit Limit</th>
+                        <th className="text-right py-3 px-4 text-gray-600">Outstanding</th>
+                        <th className="text-right py-3 px-4 text-gray-600">Available Credit</th>
+                        <th className="text-center py-3 px-4 text-gray-600">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {vendorPageItems.length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="py-6 text-center text-gray-500">
+                            No vendors found.
+                          </td>
+                        </tr>
+                      ) : (
+                        vendorPageItems.map((vendor) => (
+                          <tr key={vendor.id} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="py-3 px-4 text-gray-900">{vendor.code}</td>
+                            <td className="py-3 px-4 text-gray-900">{vendor.name}</td>
+                            <td className="py-3 px-4">
+                              <span className={`px-2 py-1 rounded text-sm ${
+                                vendor.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                              }`}>
+                                {vendor.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4">
+                              {vendor.isPkp ? (
+                                <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm">PKP</span>
+                              ) : (
+                                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">NON-PKP</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 text-gray-700">{vendor.paymentTerm}</td>
+                            <td className="py-3 px-4 text-right text-gray-900">
+                              {formatCurrency(vendor.creditLimit)}
+                            </td>
+                            <td className={`py-3 px-4 text-right font-medium ${getOutstandingTone(vendor)}`}>
+                              {formatCurrency(vendor.outstanding)}
+                            </td>
+                            <td className="py-3 px-4 text-right text-gray-900">
+                              {formatCurrency(vendor.creditLimit - vendor.outstanding)}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <button
+                                onClick={() => {
+                                  setSelectedVendor(vendor);
+                                  setShowVendorDetails(true);
+                                }}
+                                className={`font-medium ${
+                                  vendor.status === 'ACTIVE'
+                                    ? 'text-purple-600 hover:text-purple-700'
+                                    : 'text-gray-400 cursor-not-allowed'
+                                }`}
+                                disabled={vendor.status !== 'ACTIVE'}
+                              >
+                                Select
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {!vendorLoading && (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-gray-500">
+                    Showing {sortedVendors.length === 0 ? 0 : vendorStartIndex + 1}-
+                    {Math.min(vendorStartIndex + vendorPageItems.length, sortedVendors.length)} of {sortedVendors.length} vendors
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setVendorPage((prev) => Math.max(1, prev - 1))}
+                      className="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50"
+                      disabled={vendorPage === 1}
+                    >
+                      Prev
+                    </button>
+                    <span className="text-sm text-gray-600">
+                      Page {vendorPage} of {vendorTotalPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVendorPage((prev) => Math.min(vendorTotalPages, prev + 1))}
+                      className="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50"
+                      disabled={vendorPage === vendorTotalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -404,7 +532,9 @@ export default function PurchasingModule() {
             <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
               <option value="">-- Select Vendor --</option>
               {vendors.map(v => (
-                <option key={v.id} value={v.id}>{v.code} - {v.name}</option>
+                <option key={v.id} value={v.id} disabled={v.status !== 'ACTIVE'}>
+                  {v.code} - {v.name} {v.status !== 'ACTIVE' ? '(INACTIVE)' : ''}
+                </option>
               ))}
             </select>
           </div>
@@ -569,7 +699,9 @@ export default function PurchasingModule() {
             <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">-- Select Vendor --</option>
               {vendors.map(v => (
-                <option key={v.id} value={v.id}>{v.code} - {v.name}</option>
+                <option key={v.id} value={v.id} disabled={v.status !== 'ACTIVE'}>
+                  {v.code} - {v.name} {v.status !== 'ACTIVE' ? '(INACTIVE)' : ''}
+                </option>
               ))}
             </select>
           </div>
@@ -872,7 +1004,9 @@ export default function PurchasingModule() {
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Status</p>
-                  <span className="inline-block px-2 py-1 bg-green-100 text-green-700 rounded text-sm">
+                  <span className={`inline-block px-2 py-1 rounded text-sm ${
+                    selectedVendor.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                  }`}>
                     {selectedVendor.status}
                   </span>
                 </div>
@@ -900,18 +1034,18 @@ export default function PurchasingModule() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Credit Limit:</span>
-                  <span className="text-gray-900 font-medium">Rp {(selectedVendor.creditLimit / 1000000).toFixed(1)}M</span>
+                  <span className="text-gray-900 font-medium">{formatCurrency(selectedVendor.creditLimit)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Outstanding:</span>
-                  <span className={selectedVendor.outstanding > selectedVendor.creditLimit * 0.8 ? 'text-red-600 font-medium' : 'text-gray-900'}>
-                    Rp {(selectedVendor.outstanding / 1000000).toFixed(1)}M
+                  <span className={`font-medium ${getOutstandingTone(selectedVendor)}`}>
+                    {formatCurrency(selectedVendor.outstanding)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Available:</span>
                   <span className="text-green-600 font-medium">
-                    Rp {((selectedVendor.creditLimit - selectedVendor.outstanding) / 1000000).toFixed(1)}M
+                    {formatCurrency(selectedVendor.creditLimit - selectedVendor.outstanding)}
                   </span>
                 </div>
                 <div className="pt-2 border-t">
@@ -947,11 +1081,18 @@ export default function PurchasingModule() {
                   setShowVendorDetails(false);
                   setShowCreatePO(true);
                 }}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={selectedVendor.status !== 'ACTIVE'}
               >
                 Create PO for This Vendor
               </button>
             </div>
+            {selectedVendor.status !== 'ACTIVE' && (
+              <div className="flex items-center gap-2 text-sm text-red-600">
+                <AlertTriangle className="w-4 h-4" />
+                Vendor INACTIVE tidak dapat digunakan untuk PO.
+              </div>
+            )}
           </div>
         )}
       </Modal>
