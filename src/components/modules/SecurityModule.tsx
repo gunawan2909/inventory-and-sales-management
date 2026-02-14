@@ -22,14 +22,14 @@ export default function SecurityModule() {
   const [activeTab, setActiveTab] = useState<'otp' | 'audit' | 'settings'>('otp');
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-gray-900 mb-1">Modul Security</h1>
-        <p className="text-gray-600">2FA/OTP, Audit Log, Settings</p>
+        <h1 className="text-lg md:text-xl lg:text-2xl text-gray-900 mb-1 font-medium">Modul Security</h1>
+        <p className="text-sm md:text-base text-gray-600">2FA/OTP, Audit Log, Settings</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-slate-600" />
@@ -40,7 +40,7 @@ export default function SecurityModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <Lock className="w-5 h-5 text-blue-600" />
@@ -51,7 +51,7 @@ export default function SecurityModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-green-600" />
@@ -62,7 +62,7 @@ export default function SecurityModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
               <Activity className="w-5 h-5 text-orange-600" />

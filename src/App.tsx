@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ClipboardList, CheckSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { LayoutDashboard, ShoppingCart, Warehouse, TrendingUp, Truck, Users, CreditCard, Wallet, BookOpen, Shield, Database, ClipboardList, CheckSquare, Menu, X } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PurchasingModule from './components/modules/PurchasingModule';
 import InventoryModule from './components/modules/InventoryModule';
@@ -35,10 +35,30 @@ const modules = [
 export default function App() {
   const [activeModule, setActiveModule] = useState<ModuleType>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size - using 640px (sm breakpoint) for better desktop support
+  useEffect(() => {
+    const checkMobile = () => {
+      // Use 640px instead of 768px to avoid triggering mobile mode on small desktop windows
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Close mobile menu when module changes
+  const handleModuleChange = (module: ModuleType) => {
+    setActiveModule(module);
+    setMobileMenuOpen(false);
+  };
 
   const renderModule = () => {
     switch (activeModule) {
-      case 'dashboard': return <Dashboard onNavigate={setActiveModule} />;
+      case 'dashboard': return <Dashboard onNavigate={handleModuleChange} />;
       case 'purchasing': return <PurchasingModule />;
       case 'inventory': return <InventoryModule />;
       case 'stock-opname': return <StockOpnameModule />;
@@ -51,7 +71,7 @@ export default function App() {
       case 'security': return <SecurityModule />;
       case 'approval': return <ApprovalModule />;
       case 'master': return <MasterModule />;
-      default: return <Dashboard onNavigate={setActiveModule} />;
+      default: return <Dashboard onNavigate={handleModuleChange} />;
     }
   };
 
@@ -80,11 +100,42 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className={`bg-white border-r border-gray-200 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+      {/* Mobile Menu Button - Only visible on mobile (< 640px) */}
+      <div className="sm:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img src="/assets/logo.svg" alt="MERCY Logo" className="w-8 h-8" />
+          <div>
+            <h1 className="text-xs font-bold text-gray-900">MERCY</h1>
+            <p className="text-[10px] text-gray-500">Medimart ERP</p>
+          </div>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 sm:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Desktop: Always visible, Mobile: Overlay when open */}
+      <aside className={`
+        bg-white border-r border-gray-200 transition-all duration-300
+        ${isMobile
+          ? `fixed inset-y-0 left-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64 z-50`
+          : `relative flex-shrink-0 ${sidebarOpen ? 'w-64' : 'w-20'}`
+        }
+      `}>
         <div className="h-full flex flex-col">
-          {/* Logo */}
-          <div className="p-4 border-b border-gray-200">
+          {/* Logo - Desktop only (>= 640px) */}
+          <div className="p-4 border-b border-gray-200 hidden sm:block">
             <div className="flex items-center gap-3">
               <img src="/assets/logo.svg" alt="MERCY Logo" className="w-10 h-10" />
               {sidebarOpen && (
@@ -97,33 +148,33 @@ export default function App() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+          <nav className={`flex-1 overflow-y-auto p-3 space-y-1 ${isMobile ? 'mt-16' : ''}`}>
             {modules.map((module) => {
               const Icon = module.icon;
               const isActive = activeModule === module.id;
-              
+
               const colors = getModuleColors(module.id, isActive);
-              
+
               return (
                 <button
                   key={module.id}
-                  onClick={() => setActiveModule(module.id as ModuleType)}
+                  onClick={() => handleModuleChange(module.id as ModuleType)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                    isActive 
-                      ? `${colors.bg} ${colors.text} shadow-sm` 
+                    isActive
+                      ? `${colors.bg} ${colors.text} shadow-sm`
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                   title={module.name}
                 >
                   <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? colors.icon : 'text-gray-500'}`} />
-                  {sidebarOpen && <span className="truncate">{module.name}</span>}
+                  {(isMobile || sidebarOpen) && <span className="truncate">{module.name}</span>}
                 </button>
               );
             })}
           </nav>
 
-          {/* Toggle Button */}
-          <div className="p-3 border-t border-gray-200">
+          {/* Toggle Button - Desktop only (>= 640px) */}
+          <div className="p-3 border-t border-gray-200 hidden sm:block">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="w-full px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
@@ -135,7 +186,7 @@ export default function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className={`flex-1 overflow-auto ${isMobile ? 'pt-14' : ''}`}>
         {renderModule()}
       </main>
     </div>

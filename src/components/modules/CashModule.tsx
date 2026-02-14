@@ -24,14 +24,14 @@ export default function CashModule() {
   const [activeTab, setActiveTab] = useState<'expense' | 'recap' | 'upload' | 'report'>('expense');
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-gray-900 mb-1">Modul Kas & Operasional</h1>
-        <p className="text-gray-600">Pengeluaran, Rekap Harian, Upload Bukti, Laporan</p>
+        <h1 className="text-lg md:text-xl lg:text-2xl text-gray-900 mb-1 font-medium">Modul Kas & Operasional</h1>
+        <p className="text-sm md:text-base text-gray-600">Pengeluaran, Rekap Harian, Upload Bukti, Laporan</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-emerald-600" />
@@ -42,7 +42,7 @@ export default function CashModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-green-600" />
@@ -53,7 +53,7 @@ export default function CashModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
               <TrendingDown className="w-5 h-5 text-red-600" />
@@ -64,7 +64,7 @@ export default function CashModule() {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <Camera className="w-5 h-5 text-blue-600" />
